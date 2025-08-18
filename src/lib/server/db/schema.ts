@@ -33,7 +33,6 @@ export const stratusProducts = pgTable('stratus_products', {
 .enableRLS();
 
 
-
 export const stratusMetrics = pgTable('stratus_metrics', {
 	id: uuid("id").primaryKey().defaultRandom(),
 	event_type: stratusMetricsEnum().notNull(),
