@@ -23,11 +23,11 @@ API_ENDPOINTS=("/api/stratus-product-events" "/api/stratus-product-meta")
 
 # Origins to test (from .env)
 ORIGINS=(
-    "$DEV_ORIGIN_1"
-    "$DEV_ORIGIN_2" 
-    "$PROD_ORIGIN_1"
-    "$PROD_ORIGIN_2"
-    "$RAILWAY_ORIGIN"
+    DEV_ORIGIN_1="http://localhost:5137",
+    DEV_ORIGIN_2="http://localhost:4137",
+    PROD_ORIGIN_1="https://stratus-ventures.org",
+    PROD_ORIGIN_2="https://www.stratus-ventures.org",
+    RAILWAY_ORIGIN="https://stratus-site-production.up.railway.app",
 )
 
 # Test counters
