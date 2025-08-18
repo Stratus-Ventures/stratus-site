@@ -12,7 +12,6 @@ RUN yarn install --frozen-lockfile
 COPY . .
 
 # Generate database types and build
-RUN yarn db:push
 RUN yarn build
 
 # Expose port 4000
