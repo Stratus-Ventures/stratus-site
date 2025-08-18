@@ -1,18 +1,23 @@
 import { env } from '$env/dynamic/private';
 
-const CLOVIS_API_BASE = env.CLOVIS_API_URL || 'http://localhost:5173';
+
+
+const CLOVIS_API_BASE = env.CLOVIS_API_URL || 'http://localhost:5174';
 const CLOVIS_API_KEY = env.CLOVIS_API_KEY;
+
+
 
 if (!CLOVIS_API_KEY) {
 	throw new Error('CLOVIS_API_KEY environment variable is required');
 }
 
+// Next we need to work on these. the 
+
 export async function fetchClovisEvents() {
 	try {
-		const response = await fetch(`${CLOVIS_API_BASE}/api/events`, {
+		const response = await fetch(`${CLOVIS_API_BASE}/api/stratus-product-events`, {
 			headers: {
 				'clovis-api-key': CLOVIS_API_KEY!,
-				'Origin': 'https://stratus-ventures.org'
 			}
 		});
 
@@ -28,12 +33,12 @@ export async function fetchClovisEvents() {
 	}
 }
 
-export async function fetchClovisProducts() {
+
+export async function fetchClovisProductMeta() {
 	try {
-		const response = await fetch(`${CLOVIS_API_BASE}/api/products`, {
+		const response = await fetch(`${CLOVIS_API_BASE}/api/stratus-product-meta`, {
 			headers: {
 				'clovis-api-key': CLOVIS_API_KEY!,
-				'Origin': 'https://stratus-ventures.org'
 			}
 		});
 
