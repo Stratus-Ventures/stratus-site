@@ -1,11 +1,9 @@
 import { db } from '$lib/server/db/index';
-import { stratusProducts } from '$lib/server/db/schema';
+import { stratusProducts, type StratusProduct } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { ProductConfig } from './config';
 import { getApiHeaders } from './config';
 import { logger } from './logger';
-
-
 
 export interface ProductMeta {
 	name: string;
@@ -15,7 +13,7 @@ export interface ProductMeta {
 
 
 
-export async function getProductById(productId: string) {
+export async function getProductById(productId: string): Promise<StratusProduct | null> {
 	const products = await db
 		.select()
 		.from(stratusProducts)
@@ -25,8 +23,7 @@ export async function getProductById(productId: string) {
 	return products[0] || null;
 }
 
-
-export async function getProductByName(name: string) {
+export async function getProductByName(name: string): Promise<StratusProduct | null> {
 	const products = await db
 		.select()
 		.from(stratusProducts)
@@ -44,7 +41,11 @@ export async function fetchProductMeta(config: ProductConfig): Promise<ProductMe
 		});
 
 		if (!response.ok) {
-			logger.warn(`Product ${config.name} meta API unavailable`, { status: response.status, url: response.url });
+			if (response.status === 403) {
+				logger.debug(`Product ${config.name} meta API blocked (expected CORS behavior)`, { status: response.status });
+			} else {
+				logger.warn(`Product ${config.name} meta API unavailable`, { status: response.status, url: response.url });
+			}
 			return null;
 		}
 
@@ -92,6 +93,6 @@ export async function ensureProductExists(config: ProductConfig): Promise<string
 }
 
 
-export async function getAllProducts() {
+export async function getAllProducts(): Promise<StratusProduct[]> {
 	return await db.select().from(stratusProducts);
 }

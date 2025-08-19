@@ -14,6 +14,11 @@ import { sql } from 'drizzle-orm';
 
 // C U S T O M   T Y P E S --------------------------------------------------------- //
 
+export type StratusProduct = typeof stratusProducts.$inferSelect;
+export type StratusMetric = typeof stratusMetrics.$inferSelect;
+export type NewStratusProduct = typeof stratusProducts.$inferInsert;
+export type NewStratusMetric = typeof stratusMetrics.$inferInsert;
+
 export const stratusMetricsEnum = pgEnum('stratus_metric_type', [
 	'user_created', 
 	'download_started', 

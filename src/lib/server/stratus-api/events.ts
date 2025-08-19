@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db/index';
-import { stratusMetrics } from '$lib/server/db/schema';
+import { stratusMetrics, type StratusMetric } from '$lib/server/db/schema';
 import type { ProductConfig } from './config';
 import { getApiHeaders } from './config';
 import { logger } from './logger';
@@ -24,7 +24,11 @@ export async function fetchProductEvents(config: ProductConfig): Promise<Product
 		});
 
 		if (!response.ok) {
-			logger.warn(`Product ${config.name} events API unavailable`, { status: response.status, url: response.url });
+			if (response.status === 403) {
+				logger.debug(`Product ${config.name} events API blocked (expected CORS behavior)`, { status: response.status });
+			} else {
+				logger.warn(`Product ${config.name} events API unavailable`, { status: response.status, url: response.url });
+			}
 			return [];
 		}
 
@@ -75,6 +79,6 @@ export async function syncProductEvents(config: ProductConfig, productId: string
 }
 
 
-export async function getAllMetrics() {
+export async function getAllMetrics(): Promise<StratusMetric[]> {
 	return await db.select().from(stratusMetrics);
 }
