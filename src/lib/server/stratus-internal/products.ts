@@ -47,7 +47,7 @@ export async function getProductBySourceId(sourceId: string): Promise<StratusPro
 
 export async function fetchProductMeta(config: ProductConfig): Promise<ProductMeta | null> {
 	try {
-		const response = await fetch(`${config.apiUrl}/stratus-product-meta`, {
+		const response = await fetch(`${config.apiUrl}/product-meta`, {
 			headers: getApiHeaders(config.apiKey)
 		});
 

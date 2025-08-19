@@ -19,7 +19,7 @@ export interface ProductEvent {
 
 export async function fetchProductEvents(config: ProductConfig): Promise<ProductEvent[]> {
 	try {
-		const response = await fetch(`${config.apiUrl}/stratus-product-events`, {
+		const response = await fetch(`${config.apiUrl}/product-events`, {
 			headers: getApiHeaders(config.apiKey)
 		});
 
