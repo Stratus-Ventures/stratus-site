@@ -31,6 +31,7 @@ export const stratusMetricsEnum = pgEnum('stratus_metric_type', [
 
 export const stratusProducts = pgTable('stratus_products', {
 	id: uuid("id").primaryKey().defaultRandom(),
+	source_id: text().notNull().unique(),
 	name: text().notNull(),
 	tagline: text().notNull(),
 	url: text().notNull()

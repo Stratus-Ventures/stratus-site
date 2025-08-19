@@ -6,6 +6,7 @@ import { getApiHeaders } from './config';
 import { logger } from '$lib/server/logger';
 
 export interface ProductMeta {
+	source_id: string;
 	name: string;
 	tagline: string;
 	url: string;
@@ -28,6 +29,16 @@ export async function getProductByName(name: string): Promise<StratusProduct | n
 		.select()
 		.from(stratusProducts)
 		.where(eq(stratusProducts.name, name))
+		.limit(1);
+	
+	return products[0] || null;
+}
+
+export async function getProductBySourceId(sourceId: string): Promise<StratusProduct | null> {
+	const products = await db
+		.select()
+		.from(stratusProducts)
+		.where(eq(stratusProducts.source_id, sourceId))
 		.limit(1);
 	
 	return products[0] || null;
@@ -60,16 +71,16 @@ export async function fetchProductMeta(config: ProductConfig): Promise<ProductMe
 
 
 export async function ensureProductExists(config: ProductConfig): Promise<string | null> {
-	// Check if product already exists
-	const existing = await getProductByName(config.name);
-	if (existing) {
-		return existing.id;
-	}
-
-	// Fetch product metadata
+	// Fetch product metadata first to get source_id
 	const meta = await fetchProductMeta(config);
 	if (!meta) {
 		return null;
+	}
+
+	// Check if product already exists by source_id
+	const existing = await getProductBySourceId(meta.source_id);
+	if (existing) {
+		return existing.id;
 	}
 
 	// Insert new product
@@ -77,6 +88,7 @@ export async function ensureProductExists(config: ProductConfig): Promise<string
 		const newProducts = await db
 			.insert(stratusProducts)
 			.values({
+				source_id: meta.source_id,
 				name: meta.name,
 				tagline: meta.tagline,
 				url: meta.url
