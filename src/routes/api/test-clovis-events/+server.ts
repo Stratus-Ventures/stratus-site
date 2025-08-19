@@ -1,5 +1,6 @@
 import { json, error, type RequestEvent} from '@sveltejs/kit';
 import { getAllMetrics } from '$lib/server/stratus-internal';
+import { logger } from '$lib/server/logger';
 
 
 
@@ -7,6 +8,7 @@ export async function GET() {
 	try {
 		// Get all metrics from our database
 		const metrics = await getAllMetrics();
+		logger.apiSuccess('/api/test-clovis-events', `Retrieved ${metrics.length} metrics`);
 		
 		return json({
 			success: true,
@@ -16,7 +18,7 @@ export async function GET() {
 			timestamp: new Date().toISOString()
 		});
 	} catch (err) {
-		console.error('Error in test-clovis-events:', err);
+		logger.error('Error in test-clovis-events', err);
 		throw error(500, `Failed to get metrics: ${err instanceof Error ? err.message : 'Unknown error'}`);
 	}
 }

@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"start": "node start",
+		"start": "node build",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -47,6 +47,7 @@
 	"dependencies": {
 		"drizzle-orm": "^0.40.0",
 		"drizzle-seed": "^0.3.1",
-		"postgres": "^3.4.5"
+		"postgres": "^3.4.5",
+		"uuid": "^9.0.1"
 	}
 }

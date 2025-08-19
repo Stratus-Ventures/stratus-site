@@ -1,5 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import { syncAllProducts, getAllProducts, getAllMetrics } from '$lib/server/stratus-internal';
+import { logger } from '$lib/server/logger';
 
 
 
@@ -7,12 +8,13 @@ export async function GET() {
 	try {
 		// Sync all products
 		await syncAllProducts();
+		logger.sync('Sync all products completed');
 		
 		// Get results
 		const products = await getAllProducts();
 		const metrics = await getAllMetrics();
 		
-		return json({
+		const response = {
 			success: true,
 			message: 'All products synced successfully',
 			summary: {
@@ -25,8 +27,11 @@ export async function GET() {
 				}))
 			},
 			timestamp: new Date().toISOString()
-		});
+		};
+		logger.apiSuccess('/api/sync-all', 'Response sent');
+		return json(response);
 	} catch (err) {
+		logger.error('Error in /api/sync-all', err);
 		throw error(500, `Sync failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
 	}
 }

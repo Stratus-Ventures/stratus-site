@@ -6,7 +6,7 @@ import {
 	pgEnum,
 	varchar,
 	pgView,
-	uuid
+	uuid,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -16,8 +16,7 @@ import { sql } from 'drizzle-orm';
 
 export type StratusProduct = typeof stratusProducts.$inferSelect;
 export type StratusMetric = typeof stratusMetrics.$inferSelect;
-export type NewStratusProduct = typeof stratusProducts.$inferInsert;
-export type NewStratusMetric = typeof stratusMetrics.$inferInsert;
+
 
 export const stratusMetricsEnum = pgEnum('stratus_metric_type', [
 	'user_created', 
@@ -30,7 +29,7 @@ export const stratusMetricsEnum = pgEnum('stratus_metric_type', [
 // T A B L E   D E F E N I T I O N S ----------------------------------------------- //
 
 export const stratusProducts = pgTable('stratus_products', {
-	id: uuid("id").primaryKey().defaultRandom(),
+	id: uuid().primaryKey().defaultRandom(),
 	source_id: text().notNull().unique(),
 	name: text().notNull(),
 	tagline: text().notNull(),
@@ -40,17 +39,16 @@ export const stratusProducts = pgTable('stratus_products', {
 
 
 export const stratusMetrics = pgTable('stratus_metrics', {
-	id: uuid("id").primaryKey().defaultRandom(),
+	id: uuid().primaryKey().defaultRandom(),
+	source_id: text().notNull().unique(),
 	event_type: stratusMetricsEnum().notNull(),
 	origin_lat: numeric({ precision: 7, scale: 4 }).notNull(),
 	origin_long: numeric({ precision: 7, scale: 4 }).notNull(),
 	city_code: varchar({ length: 3 }).notNull(),
 	country_code: varchar({ length: 3 }).notNull(),
 	from_product: uuid('product_id').notNull().references(() => stratusProducts.id),
-	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull()
-})
-.enableRLS();
-
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}).enableRLS();
 
 
 // V I E W S ----------------------------------------------------------------------- //
