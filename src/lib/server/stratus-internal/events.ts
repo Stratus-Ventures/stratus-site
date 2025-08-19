@@ -4,7 +4,6 @@ import { and, eq, inArray } from 'drizzle-orm';
 import type { ProductConfig } from './config';
 import { getApiHeaders } from './config';
 import { logger } from '$lib/server/logger';
-// import { getProductById } from './products';
 
 
 
@@ -51,8 +50,20 @@ export async function saveProductEvents(events: ProductEvent[], productId: strin
 	}
 
 	try {
+		// Normalize inbound events to ensure source_id is present even if sent as source-id/sourceId
+		const normalized = events
+			.map((e) => ({
+				...e,
+				source_id: (e as any).source_id ?? (e as any)['source-id'] ?? (e as any).sourceId ?? (e as any).id
+			}))
+			.filter((e) => Boolean(e.source_id));
+
+		if (!normalized.length) {
+			logger.warn('No valid events after normalization (missing source_id)');
+			return 0;
+		}
 		// Dedupe by inbound source_id and insert as-is
-		const inboundSourceIds = events.map((e) => e.source_id);
+		const inboundSourceIds = normalized.map((e) => e.source_id);
 
 		const existing = await db
 			.select({ source_id: stratusMetrics.source_id })
@@ -65,7 +76,7 @@ export async function saveProductEvents(events: ProductEvent[], productId: strin
 			);
 
 		const existingIds = new Set(existing.map((r: { source_id: string }) => r.source_id));
-		const deduped = events.filter((e) => !existingIds.has(e.source_id));
+		const deduped = normalized.filter((e) => !existingIds.has(e.source_id));
 		if (!deduped.length) return 0;
 
 		const eventsToInsert = deduped.map((event) => ({
