@@ -16,6 +16,7 @@ export async function GET() {
 			timestamp: new Date().toISOString()
 		});
 	} catch (err) {
+		console.error('Error in test-clovis-events:', err);
 		throw error(500, `Failed to get metrics: ${err instanceof Error ? err.message : 'Unknown error'}`);
 	}
 }
