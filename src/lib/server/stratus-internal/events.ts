@@ -2,7 +2,7 @@ import { db } from '$lib/server/db/index';
 import { stratusMetrics, type StratusMetric } from '$lib/server/db/schema';
 import type { ProductConfig } from './config';
 import { getApiHeaders } from './config';
-import { logger } from './logger';
+import { logger } from '$lib/server/logger';
 
 
 
