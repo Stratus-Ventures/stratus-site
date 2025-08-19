@@ -1,7 +1,7 @@
 import { getAllProductConfigs } from './config';
 import { ensureProductExists } from './products';
 import { syncProductEvents } from './events';
-import { logger } from './logger';
+import { logger } from '$lib/server/logger';
 
 
 
@@ -32,10 +32,10 @@ export async function syncSingleProduct(productName: string): Promise<boolean> {
 
 
 export async function syncAllProducts(): Promise<void> {
-	logger.info('Starting full product sync');
+	logger.sync('Starting full product sync');
 	
 	const configs = getAllProductConfigs();
-	logger.info(`Found product configurations`, { count: configs.length });
+	logger.sync(`Found ${configs.length} product configurations`);
 
 	const results = await Promise.allSettled(
 		configs.map(config => syncSingleProduct(config.name))
@@ -44,7 +44,7 @@ export async function syncAllProducts(): Promise<void> {
 	const successful = results.filter(r => r.status === 'fulfilled' && r.value).length;
 	const failed = results.length - successful;
 
-	logger.info('Full product sync completed', { successful, failed });
+	logger.sync(`Full product sync completed - ${successful} successful, ${failed} failed`);
 }
 
 

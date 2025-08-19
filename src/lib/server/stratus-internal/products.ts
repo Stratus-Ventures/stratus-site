@@ -3,7 +3,7 @@ import { stratusProducts, type StratusProduct } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { ProductConfig } from './config';
 import { getApiHeaders } from './config';
-import { logger } from './logger';
+import { logger } from '$lib/server/logger';
 
 export interface ProductMeta {
 	name: string;

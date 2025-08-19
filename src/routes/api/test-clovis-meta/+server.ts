@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { getAllProducts } from '$lib/server/stratus-api';
+import { getAllProducts } from '$lib/server/stratus-internal';
 
 export async function GET() {
 	try {

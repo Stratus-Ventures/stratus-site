@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { syncAllProducts, getAllProducts, getAllMetrics } from '$lib/server/stratus-api';
+import { syncAllProducts, getAllProducts, getAllMetrics } from '$lib/server/stratus-internal';
 
 
 

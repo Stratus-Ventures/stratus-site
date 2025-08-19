@@ -1,5 +1,5 @@
 import { json, error, type RequestEvent} from '@sveltejs/kit';
-import { getAllMetrics } from '$lib/server/stratus-api';
+import { getAllMetrics } from '$lib/server/stratus-internal';
 
 
 
@@ -12,7 +12,7 @@ export async function GET() {
 			success: true,
 			message: 'Metrics retrieved from database',
 			metricsCount: metrics.length,
-			recentMetrics: metrics.slice(-5), // Show last 5 metrics
+			recentMetrics: metrics.slice(-5),
 			timestamp: new Date().toISOString()
 		});
 	} catch (err) {
