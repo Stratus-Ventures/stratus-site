@@ -15,8 +15,12 @@ export async function GET() {
 			products: products,
 			timestamp: new Date().toISOString()
 		});
-	} catch (err) {
-		logger.error('Error in test-clovis-meta', err);
-		throw error(500, `Failed to get products: ${err instanceof Error ? err.message : 'Unknown error'}`);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error('Error in test-clovis-meta', err);
+		} else {
+			logger.error('Error in test-clovis-meta', { error: String(err) });
+		}
+		error(500, { message: 'Failed to get products' });
 	}
 }

@@ -14,18 +14,18 @@ export async function syncSingleProduct(productName: string): Promise<boolean> {
 		return false;
 	}
 
-	logger.debug(`Starting product sync`, { product: config.name });
+	logger.debug(`📥 Starting sync for ${config.name}`);
 
 	// Ensure product exists in database
 	const productId = await ensureProductExists(config);
 	if (!productId) {
-		logger.error(`Failed to ensure product exists`, { product: config.name });
+		logger.error(`❌ Failed to ensure product exists: ${config.name}`);
 		return false;
 	}
 
 	// Sync events
 	const eventCount = await syncProductEvents(config, productId);
-	logger.debug(`Product sync completed`, { product: config.name, eventCount });
+	logger.debug(`📤 Sync completed for ${config.name}: ${eventCount} events processed`);
 	
 	return true;
 }

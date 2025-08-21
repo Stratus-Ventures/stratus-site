@@ -30,8 +30,12 @@ export async function GET() {
 		};
 		logger.apiSuccess('/api/sync-all', 'Response sent');
 		return json(response);
-	} catch (err) {
-		logger.error('Error in /api/sync-all', err);
-		throw error(500, `Sync failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error('Error in /api/sync-all', err);
+		} else {
+			logger.error('Error in /api/sync-all', { error: String(err) });
+		}
+		error(500, { message: 'Sync failed' });
 	}
 }

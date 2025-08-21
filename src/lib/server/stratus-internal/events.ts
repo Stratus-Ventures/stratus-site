@@ -38,8 +38,12 @@ export async function fetchProductEvents(config: ProductConfig): Promise<Product
 		const data = await response.json();
 		return data.stratusProductEvents || [];
 
-	} catch (error) {
-		logger.error(`Failed to fetch events for product ${config.name}`, error);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error(`Failed to fetch events for product ${config.name}`, err);
+		} else {
+			logger.error(`Failed to fetch events for product ${config.name}`, { error: String(err) });
+		}
 		return [];
 	}
 }
@@ -79,8 +83,15 @@ export async function saveProductEvents(events: ProductEvent[], productId: strin
 				`${r.event_type}|${r.origin_lat}|${r.origin_long}|${r.city_code}|${r.country_code}`
 			)
 		);
+		
 		const deduped = events.filter((e) => !existingSignatures.has(signature(e)));
-		if (!deduped.length) return 0;
+		
+		if (!deduped.length) {
+			logger.info(`📋 Sync result: All ${events.length} events from clovis already exist in stratus - no new data to sync`);
+			return 0;
+		}
+		
+		logger.info(`📋 Sync processing: Found ${deduped.length} new events to sync (${events.length - deduped.length} already existed)`);
 
 		// Determine next numeric suffix starting at 0
 		let maxN = -1;
@@ -105,8 +116,12 @@ export async function saveProductEvents(events: ProductEvent[], productId: strin
 		await db.insert(stratusMetrics).values(eventsToInsert);
 		return eventsToInsert.length;
 
-	} catch (error) {
-		logger.error(`Failed to save events for product ${productId}`, error);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error(`Failed to save events for product ${productId}`, err);
+		} else {
+			logger.error(`Failed to save events for product ${productId}`, { error: String(err) });
+		}
 		return 0;
 	}
 }
@@ -120,7 +135,9 @@ export async function syncProductEvents(config: ProductConfig, productId: string
 	const savedCount = await saveProductEvents(events, productId);
 	
 	if (savedCount > 0) {
-		logger.info(`Events synced for product ${config.name}`, { count: savedCount });
+		logger.info(`✅ Successfully synced ${savedCount} new events for ${config.name}`);
+	} else {
+		logger.info(`⏭️  No new events to sync for ${config.name} - data already up to date`);
 	}
 	
 	return savedCount;

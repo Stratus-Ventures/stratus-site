@@ -34,7 +34,8 @@ export function getAllProductConfigs(): ProductConfig[] {
 		const apiUrl = env[urlKey];
 		const apiKey = env[keyKey];
 
-		if (apiUrl && apiKey) {
+		// Security: Validate URL format and API key length
+		if (apiUrl && apiKey && apiUrl.startsWith('http') && apiKey.length > 10) {
 			configs.push({
 				name,
 				apiUrl,

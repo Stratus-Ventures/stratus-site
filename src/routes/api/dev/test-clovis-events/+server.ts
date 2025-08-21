@@ -17,8 +17,13 @@ export async function GET() {
 			recentMetrics: metrics.slice(-5),
 			timestamp: new Date().toISOString()
 		});
-	} catch (err) {
-		logger.error('Error in test-clovis-events', err);
-		throw error(500, `Failed to get metrics: ${err instanceof Error ? err.message : 'Unknown error'}`);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error('Error in test-clovis-events', err);
+		} else {
+			logger.error('Error in test-clovis-events', { error: String(err) });
+		}
+		// Use SvelteKit error() correctly - don't catch and re-throw
+		error(500, { message: 'Failed to get metrics' });
 	}
 }

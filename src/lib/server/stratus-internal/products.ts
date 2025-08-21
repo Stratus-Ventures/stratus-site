@@ -63,8 +63,12 @@ export async function fetchProductMeta(config: ProductConfig): Promise<ProductMe
 		const data = await response.json();
 		return data.stratusProductMeta;
 
-	} catch (error) {
-		logger.error(`Failed to fetch product ${config.name} metadata`, error);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error(`Failed to fetch product ${config.name} metadata`, err);
+		} else {
+			logger.error(`Failed to fetch product ${config.name} metadata`, { error: String(err) });
+		}
 		return null;
 	}
 }
@@ -98,8 +102,12 @@ export async function ensureProductExists(config: ProductConfig): Promise<string
 		logger.info(`Product added to database: ${config.name}`);
 		return newProducts[0].id;
 
-	} catch (error) {
-		logger.error(`Failed to create product ${config.name}`, error);
+	} catch (err: unknown) {
+		if (err instanceof Error) {
+			logger.error(`Failed to create product ${config.name}`, err);
+		} else {
+			logger.error(`Failed to create product ${config.name}`, { error: String(err) });
+		}
 		return null;
 	}
 }
