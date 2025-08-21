@@ -37,7 +37,7 @@ export async function checkForChanges(): Promise<boolean> {
 
 				const response = await fetch(`${config.apiUrl}/product-events`, {
 					headers: getApiHeaders(config.apiKey),
-					signal: AbortSignal.timeout(5000)
+					signal: AbortSignal.timeout(15000)
 				});
 
 				// Enhanced error handling
@@ -77,7 +77,9 @@ export async function checkForChanges(): Promise<boolean> {
 			} catch (err: unknown) {
 				if (err instanceof TypeError && err.message.includes('fetch')) {
 					logger.error(`Poller: Network error for ${config.name}`, err);
-				} else if (err instanceof Error && err.name === 'AbortError') {
+				} else if (err instanceof Error && (err.name === 'AbortError' || err.name === 'TimeoutError')) {
+					logger.warn(`Poller: Request timeout for ${config.name}`);
+				} else if (err instanceof DOMException && err.name === 'TimeoutError') {
 					logger.warn(`Poller: Request timeout for ${config.name}`);
 				} else if (err instanceof Error) {
 					logger.error(`Poller: Unexpected error for ${config.name}`, err);
