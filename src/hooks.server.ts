@@ -1,53 +1,30 @@
-import { startPoller, stopPoller } from '$lib/server/poller';
-import { logger } from '$lib/server/logger';
 
-/**
- * Server initialization hook - runs once when the server starts
- * Used for initializing database clients, background services, etc.
- */
-export async function init() {
-	try {
-		logger.info('Server initializing - starting realtime poller service');
-		
-		// Start aggressive polling every 10 seconds for changes
-		startPoller(10);
-		
-		logger.info('Realtime poller service started successfully');
-		
-		// Graceful shutdown handling
-		process.on('SIGTERM', () => {
-			logger.info('SIGTERM received - stopping poller service');
-			stopPoller();
+
+//  B L O C K   S P A M   P A T H S  ------------------------------------------------- //
+
+const SPAM_PATHS = [
+	'wp-admin','wp-login','wp-content','wp-includes','wp-config','wp-json','wordpress',
+    'xmlrpc.php','wp-cron.php','wp-trackback.php','phpmyadmin','phpMyAdmin','pma','adminer', 
+    'mysql','admin.php','index.php','config.php','install.php','setup.php','administrator', 
+    'cpanel','webmail','panel','dashboard','manager','control','backend','.env','.git','.svn',
+    '.htaccess','.htpasswd','web.config','composer.json','package.json','cgi-bin','scripts','cgi',
+    'bin','drupal','sites/default','user/login','node/','joomla','administrator/index.php',
+    'components/','sitemap.xml','favicon.ico','crossdomain.xml','clientaccesspolicy.xml','api/v1',
+    'rest/api','graphql','api.php','backup','backups','dump','.bak','.old','.tmp','temp','test',
+    'demo','dev','security','secure','ssl','admin/login','login.php','user.php','account.php',
+    'auth.php','filemanager','file-manager','files','upload','typo3','concrete5','modx','prestashop',
+	'mobile', 'app', 'ios', 'android'
+];
+
+export async function handle({ event, resolve }) {
+	const path = event.url.pathname.toLowerCase();
+	
+	if (SPAM_PATHS.some(spam => path.includes(spam))) {
+		return new Response('', { 
+			status: 404,
+			headers: { 'content-type': 'text/plain' }
 		});
-		
-		process.on('SIGINT', () => {
-			logger.info('SIGINT received - stopping poller service');
-			stopPoller();
-		});
-		
-	} catch (err: unknown) {
-		if (err instanceof Error) {
-			logger.error('Failed to initialize server services', err);
-			throw err; // Re-throw to prevent server startup if critical services fail
-		} else {
-			const error = new Error(`Server initialization failed: ${String(err)}`);
-			logger.error('Failed to initialize server services', error);
-			throw error;
-		}
 	}
-}
 
-/**
- * Error handling hook - catches unexpected errors during loading or rendering
- */
-export function handleError({ error, event }) {
-	logger.error('Unhandled server error', {
-		error: error instanceof Error ? error.message : String(error),
-		stack: error instanceof Error ? error.stack : undefined,
-		url: event.url.pathname,
-		method: event.request.method
-	});
-
-	// SvelteKit expects either Error object or void, not custom objects
-	return new Error('An internal error occurred');
+	return resolve(event);
 }

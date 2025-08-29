@@ -1,1 +1,7 @@
-// place files you want to import through the `$lib` alias in this folder.
+
+
+//  S V E L T E   C O M P O N E N T S  ----------------------------------------------- //
+
+
+
+//  S E R V I C E S  ----------------------------------------------------------------- //
