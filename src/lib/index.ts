@@ -5,3 +5,10 @@
 
 
 //  S E R V I C E S  ----------------------------------------------------------------- //
+
+
+
+//  D A T A B A S E  ----------------------------------------------------------------- //
+
+export { db } from '$lib/server/db/client';
+export { stratusMetrics } from '$lib/server/db/schema';
