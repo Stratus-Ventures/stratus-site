@@ -2,6 +2,9 @@
 
 //  S V E L T E   C O M P O N E N T S  ----------------------------------------------- //
 
+import ThemeToggle from './components/ThemeToggle.svelte';
+export default ThemeToggle;
+
 
 
 //  S E R V I C E S  ----------------------------------------------------------------- //
