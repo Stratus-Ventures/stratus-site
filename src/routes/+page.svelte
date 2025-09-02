@@ -1,6 +1,6 @@
-<script lang=ts>
+<script lang="ts">
 
-	import ThemeToggle from "$lib/index";
+	import { ThemeToggle } from "$lib";
     
 </script>
 
@@ -36,7 +36,7 @@
     <!-- PRODUCT LIST -->
     <div class="
         flex flex-row w-full h-fit
-        items-center justify-start
+        items-center justify-center
     ">
         
     </div>
@@ -44,8 +44,9 @@
     <!-- FOOTER -->
     <footer class="
         flex flex-row w-full h-fit
-        items-center justify-start
+        items-center justify-center
     ">
+        
         <ThemeToggle />
     </footer>
 </main>
