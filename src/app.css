@@ -1,1 +1,123 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+/*  L O A D   F O N T S  ------------------------------------------------------------- */
+
+@font-face {
+    font-family: "Geist";
+    src: url("/fonts/Geist-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Geist";
+    src: url("/fonts/Geist-SemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Space Grotesk";
+    src: url("/fonts/SpaceGrotesk-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+/*  T H E M E   S T Y L E S  --------------------------------------------------------- */
+
+@theme {
+
+    /*  F O N T S  ----------------------------------------------- */
+    --font-sans: 'Geist', system-ui, sans-serif;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+
+    /*  C O L O R S  --------------------------------------------- */
+
+	/* Primary colors */
+	--color-primary-fg: rgb(10 10 10);       /* neutral-950 */
+	--color-primary-bg: rgb(255 255 255);    /* white */
+
+	/* Secondary colors */
+	--color-secondary-fg: rgb(10 10 10);     /* neutral-950 */
+	--color-secondary-bg: rgb(250 250 250);  /* neutral-50 */
+
+	/* Interactive elements */
+	--color-button-fg: rgb(255 255 255);     /* white */
+	--color-button-bg: rgb(10 10 10);        /* neutral-950 */
+	--color-button-bg-hover: rgb(64 64 64);  /* neutral-700 */
+
+}
+
+.dark {
+	/* Primary colors */
+	--color-primary-fg: rgb(255 255 255);    /* neutral-50 */
+	--color-primary-bg: rgb(10 10 10);       /* neutral-950 */
+
+	/* Secondary colors */
+	--color-secondary-fg: rgb(255 255 255);  /* neutral-50 */
+	--color-secondary-bg: rgb(23 23 23);     /* neutral-900 */
+
+	/* Interactive elements */
+	--color-button-fg: rgb(10 10 10);        /* neutral-950 */
+	--color-button-bg: rgb(255 255 255);     /* neutral-50 */
+	--color-button-bg-hover: rgb(229 229 229); /* neutral-200 */
+}
+
+
+/*  B A S E   S T Y L E S  ----------------------------------------------------------- */
+
+@layer base {
+
+    /*  T H E M E   T R A N S I T I O N  */
+    .theme-transition, .theme-transition * {
+        transition:
+        background-color 300ms ease-in-out,
+        color 300ms ease-in-out,
+        border-color 300ms ease-in-out,
+        fill 300ms ease-in-out,
+        stroke 300ms ease-in-out;
+    }
+
+    /*  R E M O V E   S C R O L L B A R S  */
+	* {
+		scrollbar-width: none;      /* Firefox */
+		-ms-overflow-style: none;   /* IE/Edge */
+	}
+	*::-webkit-scrollbar {
+		display: none;              /* Chrome/Safari/Edge/iOS */
+	}
+}
+
+
+/*  U T I L I T Y   S T Y L E S  ----------------------------------------------------- */
+
+@layer utilities {
+
+    .h1 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        @apply text-5xl leading-tight tracking-tight;
+    }
+
+    .title {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        @apply text-base leading-tight tracking-tight;
+    }
+
+    .paragraph {
+        font-family: var(--font-sans);
+        font-weight: 400;
+        @apply text-base leading-tight tracking-tight;
+    }
+
+    .button-label {
+        font-family: var(--font-sans);
+        font-weight: 400;
+        @apply text-base leading-tight tracking-tight;
+    }
+}

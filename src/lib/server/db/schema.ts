@@ -1,32 +1,17 @@
-import { 
-	pgTable, 
-	text, 
-	numeric,
-	timestamp, 
-	pgEnum,
-	varchar,
-	pgView,
-	uuid,
-} from 'drizzle-orm/pg-core';
+import { pgTable, text, numeric, timestamp, pgEnum, varchar, pgView, uuid } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 
+//  C U S T O M   T Y P E S  --------------------------------------------------------- //
 
-// C U S T O M   T Y P E S --------------------------------------------------------- //
-
-export type StratusProduct = typeof stratusProducts.$inferSelect;
-export type StratusMetric = typeof stratusMetrics.$inferSelect;
-
-
-export const stratusMetricsEnum = pgEnum('stratus_metric_type', [
+export const stratusMetricEnum = pgEnum('stratus_metric_type', [
 	'user_created', 
 	'download_started', 
 	'subscription_activated'
 ]);
 
 
-
-// T A B L E   D E F E N I T I O N S ----------------------------------------------- //
+//  T A B L E   D E F E N I T I O N S  ----------------------------------------------- //
 
 export const stratusProducts = pgTable('stratus_products', {
 	id: uuid().primaryKey().defaultRandom(),
@@ -37,21 +22,21 @@ export const stratusProducts = pgTable('stratus_products', {
 })
 .enableRLS();
 
-
 export const stratusMetrics = pgTable('stratus_metrics', {
 	id: uuid().primaryKey().defaultRandom(),
 	source_id: text().notNull().unique(),
-	event_type: stratusMetricsEnum().notNull(),
-	origin_lat: numeric({ precision: 7, scale: 4 }).notNull(),
-	origin_long: numeric({ precision: 7, scale: 4 }).notNull(),
+	event_type: stratusMetricEnum().notNull(),
+	origin_lat: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
+	origin_long: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
 	city_code: varchar({ length: 3 }).notNull(),
 	country_code: varchar({ length: 3 }).notNull(),
-	from_product: uuid('product_id').notNull().references(() => stratusProducts.id),
+	product_id: uuid('product_id').notNull().references(() => stratusProducts.id),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}).enableRLS();
+})
+.enableRLS();
 
 
-// V I E W S ----------------------------------------------------------------------- //
+//  V I E W S  ----------------------------------------------------------------------- //
 
 export const totalEventCount = pgView('totalEventCount')
 .with({
