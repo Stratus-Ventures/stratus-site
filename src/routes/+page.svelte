@@ -1,52 +1,64 @@
 <script lang="ts">
 
-	import { ThemeToggle } from "$lib";
-    
+    import { Button, Footer } from '$lib';
+
 </script>
 
-<main class="
+
+
+<div class="
     flex flex-col w-full h-fit sm:h-screen
-    items-start justify-center
-    p-5 sm:p-8
-    bg-primary-bg
+    items-center justify-center
+    p-5 sm:p-8 bg-primary-bg antialiased
 ">
-    <!-- HERO SECTION -->
-    <section class="
-        flex flex-row w-full h-fit
+
+    <!-- MAIN -->
+     <main class="
+        flex flex-col w-full max-w-7xl h-fit
         items-center justify-start
-    ">
+     ">
 
-        <!-- CONTENT CONTAINER -->
+        <!-- HERO SECTION -->
+        <section class="
+            flex flex-row w-full h-fit
+            items-center justify-start
+        ">
 
-            <!-- LOGO & H1 -->
+            <!-- CONTENT CONTAINER -->
 
-            <!-- PARAGRAPH -->
+                <!-- LOGO & H1 -->
 
-            <!-- BUTTON WRAPPER -->
-        
+                <!-- PARAGRAPH -->
 
-        <!-- HERO GRAPHIC CONTAINER -->
+                <!-- BUTTON WRAPPER -->
+                <div class="
+                    flex flex-row w-fit h-fit items-center justify-center 
+                    gap-3
+                ">
+                    <Button href="https://cal.com/stratus-ventures.org/coffee-chat" label="Book a Call"/>
+                    <Button href="mailto:jason@stratus-ventures.org" label="E-Mail" variant="outlined" />
+                </div>
+            
 
-            <!-- 3D GLOBE -->
+            <!-- HERO GRAPHIC CONTAINER -->
 
-            <!-- METRICS BLOCK -->
+                <!-- 3D GLOBE -->
 
-    </section>
+                <!-- METRICS BLOCK -->
 
-    <!-- PRODUCT LIST -->
-    <div class="
-        flex flex-row w-full h-fit
-        items-center justify-center
-    ">
-        
-    </div>
+        </section>
 
-    <!-- FOOTER -->
-    <footer class="
-        flex flex-row w-full h-fit
-        items-center justify-center
-    ">
-        
-        <ThemeToggle />
-    </footer>
-</main>
+        <!-- PRODUCT LIST -->
+        <div class="
+            flex flex-row w-full h-fit
+            items-center justify-center
+        ">
+            
+        </div>
+
+        <!-- FOOTER -->
+        <Footer />
+
+     </main>
+
+</div>
