@@ -5,11 +5,10 @@
 </script>
 
 
-
 <div class="
-    flex flex-col w-full h-fit sm:h-screen
+    flex flex-col w-full min-w-xs h-fit sm:h-screen
     items-center justify-center
-    p-5 sm:p-8 bg-primary-bg antialiased
+    p-5 sm:p-8 antialiased
 ">
 
     <!-- MAIN -->
@@ -32,11 +31,19 @@
 
                 <!-- BUTTON WRAPPER -->
                 <div class="
-                    flex flex-row w-fit h-fit items-center justify-center 
-                    gap-3
+                    flex flex-col sm:flex-row w-full sm:w-fit h-fit 
+                    items-center justify-center gap-3
                 ">
-                    <Button href="https://cal.com/stratus-ventures.org/coffee-chat" label="Book a Call"/>
-                    <Button href="mailto:jason@stratus-ventures.org" label="E-Mail" variant="outlined" />
+                    <Button 
+                        href="https://cal.com/stratus-ventures.org/coffee-chat" 
+                        label="Book a Call" 
+                        shimmer={true} 
+                    />
+                    <Button 
+                        href="mailto:jason@stratus-ventures.org" 
+                        label="E-Mail" 
+                        variant="outlined"
+                    />
                 </div>
             
 
