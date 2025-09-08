@@ -56,13 +56,13 @@
 >
     {#if mode === 'light'}
       <Sun 
-        size={20}
+        size={16}
         color={isHovered ? 'var(--color-primary-fg)' : 'var(--color-secondary-fg)'}
         {isHovered}
       />
     {:else}
       <Moon 
-        size={20}
+        size={16}
         color={isHovered ? 'var(--color-primary-fg)' : 'var(--color-secondary-fg)'}
         {isHovered}
       />
