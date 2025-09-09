@@ -1,15 +1,10 @@
 <script lang="ts">
 
     interface Props {
-        /** Icon component to display */
         icon: any;
-        /** URL for link behavior */
         href?: string;
-        /** Click handler function */
         onClick?: () => void;
-        /** Icon size */
         size?: number;
-        /** ARIA label for accessibility */
         ariaLabel: string;
     }
 
@@ -21,6 +16,11 @@
         ariaLabel 
     }: Props = $props();
 
+    // 1. Handle hover state for icon color changes
+
+    // ----------------------------------------------------------- //
+
+    // [ STEP 1. ]
     let isHovered = $state(false);
 
 </script>
