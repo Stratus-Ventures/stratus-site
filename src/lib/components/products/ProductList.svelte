@@ -28,7 +28,7 @@
                 ease-in-out
              "
         >
-            <h4 class="title text-primary-fg mr-42">
+            <h4 class="title text-primary-fg mr-8 sm:mr-42">
                 {product.name}
             </h4>
 
