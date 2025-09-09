@@ -58,7 +58,7 @@
 	
 	
 	.x-icon.animate {
-		animation: all 0.3s ease;
+		animation: xAnimation 0.3s ease;
 	}
 	
 	@keyframes xAnimation {
