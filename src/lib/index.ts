@@ -4,6 +4,7 @@
 
 export { default as Button } from './components/Button.svelte';
 export { default as IconButton } from './components/IconButton.svelte';
+export { default as ProductList } from './components/products/ProductList.svelte';
 
 export { default as Footer } from './components/footer/Footer.svelte';
 export { default as ThemeToggle } from './components/footer/ThemeToggle.svelte';

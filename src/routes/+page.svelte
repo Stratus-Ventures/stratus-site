@@ -1,6 +1,14 @@
 <script lang="ts">
+    import { Button, Footer, Logo, ProductList } from '$lib';
 
-    import { Button, Footer, Logo } from '$lib';
+    // 1. Load data from server
+    // 2. Pass data to components
+
+    // ----------------------------------------------------------- //
+
+    // [ STEP 1. ]
+    /** @type {import('./$types').PageData} */
+    let { data } = $props();
 
 </script>
 
@@ -8,23 +16,24 @@
 <div class="
     flex flex-col w-full min-w-xs h-fit sm:h-screen
     items-center justify-center
-    p-5 sm:p-8 antialiased
+    p-5 sm:p-8 antialiased theme-transition
 ">
 
     <!-- MAIN -->
      <main class="
-        flex flex-col w-full max-w-7xl h-fit
-        items-center justify-start
+        flex flex-col w-full max-w-6xl h-fit
+        items-center justify-start gap-24
      ">
 
         <!-- HERO SECTION -->
         <section class="
-            flex flex-row w-full h-fit
+            flex flex-col sm:flex-row w-full h-fit
             items-center justify-start
         ">
 
             <!-- CONTENT CONTAINER -->
             <div class="
+                order-2 sm:order-1
                 flex flex-col w-full h-fit
                 items-start justify-center
                 gap-5
@@ -40,8 +49,9 @@
                     />
                     <h1 class="h1 text-primary-fg select-none">Stratus</h1>
                 </div>
+
                 <!-- PARAGRAPH -->
-                <p class="paragraph text-secondary-fg line-clamp-3 h-fit">
+                <p class="paragraph text-secondary-fg line-clamp-4 w-fit select-none">
                     Stratus Ventures LLC owns a group of AI-forward ventures founded by
                     <a href="https://x.com/jasoncoawette" class="text-primary-fg title link-text">Jason Coawette</a>
                     and is located in Phoenix, Arizona.
@@ -49,7 +59,7 @@
 
                 <!-- BUTTON WRAPPER -->
                 <div class="
-                    flex flex-col sm:flex-row w-full sm:w-fit h-fit 
+                    flex flex-row w-full sm:w-fit h-fit 
                     items-center justify-center 
                     gap-3 mt-5
                 ">
@@ -68,20 +78,22 @@
             
 
             <!-- HERO GRAPHIC CONTAINER -->
+            <div class="
+                order-1 sm:order-2
+                flex flex-col w-full h-fit
+                items-center justify-center
+            ">
 
                 <!-- 3D GLOBE -->
 
                 <!-- METRICS BLOCK -->
 
+            </div>
+
         </section>
 
         <!-- PRODUCT LIST -->
-        <div class="
-            flex flex-row w-full h-fit
-            items-center justify-center
-        ">
-            
-        </div>
+        <ProductList products={data.products} />
 
         <!-- FOOTER -->
         <Footer />

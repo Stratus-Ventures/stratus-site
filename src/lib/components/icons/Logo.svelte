@@ -23,6 +23,7 @@
     stroke-linecap="round"
     stroke-linejoin="round"
     xmlns="http://www.w3.org/2000/svg"
+    class="theme-transition"
 >
     <path d="M16,8 C15,4 14,2 12,2 C9,2 7,6 7,12 S9,22 12,22 C12,22 13,22 13,22" />
     <path d="M15,14 L19,16 L17,20" />

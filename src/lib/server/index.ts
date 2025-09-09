@@ -1,7 +1,9 @@
+
+
 //  D A T A B A S E  ----------------------------------------------------------------- //
 
 export { db } from './db/client';
-export { stratusMetrics } from './db/schema';
+export { stratusMetrics, stratusProducts } from './db/schema';
 
 //  S E R V I C E S  ----------------------------------------------------------------- //
 
