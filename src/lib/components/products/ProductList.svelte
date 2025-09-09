@@ -20,15 +20,14 @@
         <a 
             href={product.url}
              class="
-                flex flex-row w-full h-fit
-                items-center justify-start
-                py-4
+                flex flex-col sm:flex-row w-full h-fit
+                items-start sm:items-center justify-start
+                py-5 gap-2 sm:gap-0
                 border-t border-border
-                hover:opacity-50
-                ease-in-out
+                hover:opacity-50 ease-in-out
              "
         >
-            <h4 class="title text-primary-fg mr-8 sm:mr-42">
+            <h4 class="title text-primary-fg sm:mr-42">
                 {product.name}
             </h4>
 
