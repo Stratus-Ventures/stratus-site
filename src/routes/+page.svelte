@@ -1,8 +1,8 @@
 <script lang="ts">
+
     import { Button, Footer, Logo, ProductList } from '$lib';
 
     // 1. Load data from server
-    // 2. Pass data to components
 
     // ----------------------------------------------------------- //
 

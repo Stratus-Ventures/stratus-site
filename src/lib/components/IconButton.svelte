@@ -32,7 +32,7 @@
         {href}
         class="
             p-1 w-fit h-fit flex items-center justify-center 
-            transition-colors duration-200 cursor-pointer" 
+            transition-colors duration-300 ease-in-out cursor-pointer" 
         aria-label={ariaLabel}
         target="_blank"
         rel="noopener noreferrer"
@@ -50,7 +50,7 @@
     <button 
         class="
             p-1 w-fit h-fit flex items-center justify-center 
-            transition-colors duration-200 cursor-pointer" 
+            transition-colors duration-300 ease-in-out cursor-pointer" 
         aria-label={ariaLabel}
         onclick={onClick}
         onmouseenter={() => isHovered = true}

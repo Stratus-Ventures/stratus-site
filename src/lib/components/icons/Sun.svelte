@@ -68,7 +68,7 @@
 
 	.sun-ray {
 		opacity: 1;
-		transition: opacity 0.3s ease;
+		transition: opacity 300ms ease-in-out;
 	}
 
 	.sun-icon.animate .sun-ray {

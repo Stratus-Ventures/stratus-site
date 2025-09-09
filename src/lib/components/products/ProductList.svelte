@@ -19,13 +19,14 @@
     {#each products as product}
         <a 
             href={product.url}
-            class="
+             class="
                 flex flex-row w-full h-fit
                 items-center justify-start
                 py-4
                 border-t border-border
                 hover:opacity-50
-            "
+                ease-in-out
+             "
         >
             <h4 class="title text-primary-fg mr-42">
                 {product.name}
