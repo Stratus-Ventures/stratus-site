@@ -26,7 +26,7 @@
 
     // [ STEP 2. ]
     let shimmerClasses = $derived(
-        shimmer && variant === 'filled' ? 'shimmer-text w-full h-full flex items-center justify-center' : 'w-full h-full flex items-center justify-center'
+        shimmer && variant === 'filled' ? 'shimmer-text relative' : 'relative'
     );
 
     // [ STEP 3. ]
@@ -78,7 +78,6 @@
     .shimmer-text {
         position: relative;
         color: rgb(var(--color-button-fg));
-        transition: color 300ms ease-in-out;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;

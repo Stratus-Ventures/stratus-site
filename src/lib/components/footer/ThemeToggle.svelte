@@ -47,8 +47,7 @@
 
 <button 
     class="
-      p-1 w-fit h-fit flex items-center justify-center 
-      transition-colors duration-200 cursor-pointer" 
+      p-1 w-fit h-fit flex items-center justify-center cursor-pointer" 
     aria-label="Toggle theme" 
     onclick={toggle}
     onmouseenter={() => isHovered = true}
