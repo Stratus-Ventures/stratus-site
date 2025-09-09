@@ -100,6 +100,7 @@
         pointer-events: none;
         opacity: 1;
     }
+
     a:hover .shimmer-text,
     button:hover .shimmer-text {
         color: var(--color-button-fg-50);
