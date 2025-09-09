@@ -50,30 +50,23 @@
 	
 	.x-icon {
 		overflow: visible;
-		transition: transform 100ms ease;
 	}
 	
 	.x-icon:hover {
-		transform: scale(1.08) rotate(25deg);
+		transform: rotate(25deg);
 	}
 	
-	.x-path {
-		transition: fill 0.3s ease;
-	}
 	
 	.x-icon.animate {
-		animation: xAnimation 0.4s ease-in-out;
+		animation: all 0.3s ease;
 	}
 	
 	@keyframes xAnimation {
 		0% {
-			transform: scale(1) rotate(0deg);
-		}
-		50% {
-			transform: scale(1.08) rotate(0deg);
+			transform: rotate(0deg);
 		}
 		100% {
-			transform: scale(1.08) rotate(25deg);
+			transform: rotate(25deg);
 		}
 	}
 </style>

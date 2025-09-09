@@ -18,7 +18,7 @@
     // [ STEP 1. ]
     let classes = $derived(`
         flex w-full sm:w-fit h-fit items-center justify-center relative
-        px-6 py-3 rounded-lg button-label
+        rounded-lg button-label px-6 py-3
         ${variant === 'outlined'
             ? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
             : 'bg-button-bg border-1 hover:bg-button-bg-hover border-button-bg text-button-fg'}
@@ -26,7 +26,7 @@
 
     // [ STEP 2. ]
     let shimmerClasses = $derived(
-        shimmer && variant === 'filled' ? 'shimmer-text relative' : 'relative'
+        shimmer && variant === 'filled' ? 'shimmer-text w-full h-full flex items-center justify-center' : 'w-full h-full flex items-center justify-center'
     );
 
     // [ STEP 3. ]
