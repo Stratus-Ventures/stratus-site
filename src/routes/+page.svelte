@@ -15,14 +15,15 @@
 
 <div class="
     flex flex-col w-full min-w-xs h-fit sm:h-screen
-    items-center justify-center
+    items-center justify-start
     p-5 sm:p-8 antialiased theme-transition
 ">
 
     <!-- MAIN -->
      <main class="
         flex flex-col w-full max-w-6xl h-fit
-        items-center justify-start gap-24
+        items-center justify-start 
+        gap-24 mt-24
      ">
 
         <!-- HERO SECTION -->
@@ -93,7 +94,11 @@
         </section>
 
         <!-- PRODUCT LIST -->
-        <ProductList products={data.products} />
+        <ProductList 
+            products={data.products} 
+            isAdmin={data.isAdmin || false} 
+            adminToken={data.token || ''}
+        />
 
         <!-- FOOTER -->
         <Footer />

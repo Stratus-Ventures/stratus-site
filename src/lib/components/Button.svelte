@@ -5,9 +5,11 @@
         href?: string;
         variant?: 'outlined' | 'filled';
         shimmer?: boolean;
+        onClick?: () => void;
+        type?: 'button' | 'submit' | 'reset';
     }
     
-    let { label, href, variant = 'filled', shimmer = false }: Props = $props();
+    let { label, href, variant = 'filled', shimmer = false, onClick, type = 'button' }: Props = $props();
 
     // 1. Compute button classes based on variant
     // 2. Handle shimmer animation with CSS-only approach
@@ -60,6 +62,8 @@
     <button 
         class={classes} 
         aria-label={label}
+        onclick={onClick}
+        type={type}
     >
         <span 
             class="{shimmerClasses}" 

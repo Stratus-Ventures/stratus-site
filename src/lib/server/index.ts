@@ -5,7 +5,9 @@
 export { db } from './db/client';
 export { stratusMetrics, stratusProducts } from './db/schema';
 
+
 //  S E R V I C E S  ----------------------------------------------------------------- //
 
 // export * from './services/auth';
 export * from './services/logger';
+// export * from './services/products';
