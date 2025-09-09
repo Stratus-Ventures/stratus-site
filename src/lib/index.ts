@@ -15,6 +15,7 @@ export { default as Email } from './components/icons/Email.svelte';
 export { default as Downloads } from './components/icons/Downloads.svelte';
 export { default as Subscription } from './components/icons/Subscription.svelte';
 export { default as Users } from './components/icons/Users.svelte';
+export { default as Logo } from './components/icons/Logo.svelte';
 
 
 //  T Y P E S  ------------------------------------------------------------------- //

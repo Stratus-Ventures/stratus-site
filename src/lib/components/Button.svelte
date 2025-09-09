@@ -111,6 +111,14 @@
         animation: shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
+    /* Disable shimmer animation on mobile to prevent transition conflicts */
+    @media (max-width: 768px) {
+        a:hover .shimmer-text::before,
+        button:hover .shimmer-text::before {
+            animation: none;
+        }
+    }
+
     @keyframes shimmer {
         0% {
             background-position: 200% 0;
