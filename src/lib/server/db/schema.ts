@@ -36,6 +36,29 @@ export const stratusMetrics = pgTable('stratus_metrics', {
 .enableRLS();
 
 
+//  H E L P E R   F U N C T I O N S  ------------------------------------------------- //
+
+const formatTitleCase = (text: string): string => {
+	return text.split(' ')
+		.map(word => {
+			if (word.length === 0) return word;
+			// Only capitalize first letter, keep rest as-is to preserve existing caps like "AI"
+			return word.charAt(0).toUpperCase() + word.slice(1);
+		})
+		.join(' ');
+};
+
+export const getFormattedProducts = async (db: any) => {
+	const products = await db.select().from(stratusProducts).orderBy(stratusProducts.name);
+	
+	return products.map((product: any) => ({
+		...product,
+		name: formatTitleCase(product.name || ''),
+		tagline: formatTitleCase(product.tagline || '')
+	}));
+};
+
+
 //  V I E W S  ----------------------------------------------------------------------- //
 
 export const totalEventCount = pgView('totalEventCount')

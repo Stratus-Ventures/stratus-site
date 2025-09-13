@@ -1,14 +1,34 @@
 <script lang="ts">
-
+    
     import { Button, Footer, Logo, ProductList } from '$lib';
+    import type { PageData } from './$types';
+    import { completeAuthFlow, clearAuthState } from '$lib';
+    import { onMount } from 'svelte';
 
-    // 1. Load data from server
+    let { data }: { data: PageData } = $props();
+    
+    // 1. Handle successful authentication
+    // 2. Handle authentication errors
+    // 3. Manage auth flow completion
 
-    // ----------------------------------------------------------- //
+    // ------------------------------------------------------------------- //
 
-    // [ STEP 1. ]
-    /** @type {import('./$types').PageData} */
-    let { data } = $props();
+    onMount(() => {
+        // [ STEP 1. ] - Handle successful authentication
+        if (data.auth?.isAuthenticated) {
+            console.log('✅ Authentication successful!');
+            if (data.auth.newCode) {
+                console.log(`🔐 New auth code: ${data.auth.newCode}`);
+            }
+            completeAuthFlow();
+        } 
+        // [ STEP 2. ] - Handle authentication errors
+        else if (data.auth?.error) {
+            console.error('❌ Authentication failed:', data.auth.error);
+            // [ STEP 3. ] - Manage auth flow completion
+            clearAuthState();
+        }
+    });
 
 </script>
 
@@ -96,8 +116,8 @@
         <!-- PRODUCT LIST -->
         <ProductList 
             products={data.products} 
-            isAdmin={data.isAdmin || false} 
-            adminToken={data.token || ''}
+            error={data.error}
+            isAuthenticated={data.auth?.isAuthenticated || false}
         />
 
         <!-- FOOTER -->
@@ -108,8 +128,8 @@
 </div>
 
 
-
 <style>
+    
 	/* LINK STYLES */
 	.link-text {
 		position: relative;
@@ -133,4 +153,5 @@
 	.link-text:hover::after {
 		transform: scaleX(1);
 	}
+
 </style>

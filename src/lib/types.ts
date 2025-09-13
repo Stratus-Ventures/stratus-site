@@ -3,12 +3,14 @@
 //  D A T A B A S E   T Y P E S  ----------------------------------------------------- //
 
 export interface StratusProduct {
-    id?: string;
-    source_id?: string;
-    name: string;
-    tagline: string;
-    url: string;
+    id: string;              // UUID from database (required for UI operations)
+    source_id: string;       // Source identifier (required)
+    name: string;            // Product name
+    tagline: string;         // Product tagline  
+    url: string;             // Product URL
 }
+
+export type Product = StratusProduct;
 
 export type StratusMetricType = 
     | 'user_created' 

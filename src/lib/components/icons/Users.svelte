@@ -67,6 +67,6 @@
 
 	.users-round-icon path,
 	.users-round-icon circle {
-		transition: all 300ms ease-in-out;
+		transition: all 0.3s ease;
 	}
 </style>

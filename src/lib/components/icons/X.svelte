@@ -18,11 +18,8 @@
 	function handleMouseEnter() {
 		if (isHovered) return;
 		isHovered = true;
-
-		setTimeout(() => {
-			isHovered = false;
-		}, 800);
 	}
+
 </script>
 
 <div class={className} aria-label="X (Twitter)" role="img" onmouseenter={handleMouseEnter}>
@@ -50,6 +47,7 @@
 	
 	.x-icon {
 		overflow: visible;
+		transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 	
 	.x-icon:hover {
@@ -58,7 +56,7 @@
 	
 	
 	.x-icon.animate {
-		animation: xAnimation 0.3s ease;
+		animation: xAnimation 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 	
 	@keyframes xAnimation {

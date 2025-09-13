@@ -19,10 +19,6 @@
 
 	function handleMouseEnter() {
 		isHovered = true;
-
-		setTimeout(() => {
-			isHovered = false;
-		}, 1100);
 	}
 
 	const sunRays = [
@@ -68,12 +64,12 @@
 
 	.sun-ray {
 		opacity: 1;
-		transition: opacity 300ms ease-in-out;
+		transition: opacity 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
 	.sun-icon.animate .sun-ray {
 		opacity: 0;
-		animation: fadeIn 0.3s ease forwards;
+		animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 		animation-delay: calc(0.1s + var(--index) * 0.09s);
 	}
 

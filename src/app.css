@@ -39,6 +39,7 @@
 
 	/* Primary colors */
 	--color-primary-fg: rgb(10 10 10);              /* neutral-950 */
+    --color-primary-fg-50: rgb(10 10 10 / 50%);        /* neutral-950 at 50% opacity */
 	--color-primary-bg: rgb(255 255 255);           /* white */
 
 	/* Secondary colors */
@@ -58,7 +59,8 @@
 } .dark {
 
 	/* Primary colors */
-	--color-primary-fg: rgb(255 255 255);           /* neutral-50 */
+	--color-primary-fg: rgb(255 255 255);           /* white */
+	--color-primary-fg-50: rgb(255 255 255 / 50%);   /* white at 50% opacity */
 	--color-primary-bg: rgb(10 10 10);              /* neutral-950 */
 
 	/* Secondary colors */
@@ -84,7 +86,11 @@
 
     /*  T H E M E   T R A N S I T I O N  */
     .theme-transition, .theme-transition * {
-        @apply transition-all duration-300 ease-in-out;
+        transition: background-color 300ms ease-in-out, 
+                   border-color 300ms ease-in-out, 
+                   color 300ms ease-in-out,
+                   fill 300ms ease-in-out,
+                   opacity 300ms ease-in-out;
     }
 
     /*  R E M O V E   S C R O L L B A R S  */

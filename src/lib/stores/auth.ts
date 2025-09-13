@@ -1,0 +1,122 @@
+import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
+
+//  A U T H   S T O R E  ------------------------------------------------------------- //
+
+interface AuthState {
+    isAuthenticated: boolean;
+    timestamp: number | null;
+}
+
+const initialState: AuthState = {
+    isAuthenticated: false,
+    timestamp: null
+};
+
+// Create writable store for auth state
+export const authStore = writable<AuthState>(initialState);
+
+//  C L I E N T - S I D E   H E L P E R S  ------------------------------------------- //
+
+export function setAuthenticated(isAuth: boolean): void {
+    
+    // 1. Set authentication state and timestamp
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Set authentication state and timestamp
+    console.log(`🔐 Auth state changed: ${isAuth ? 'AUTHENTICATED' : 'LOGGED OUT'}`);
+    authStore.set({
+        isAuthenticated: isAuth,
+        timestamp: isAuth ? Date.now() : null
+    });
+}
+
+export function clearAuthState(): void {
+
+    // 1. Reset auth state to initial values
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Reset auth state to initial values
+    authStore.set(initialState);
+}
+
+export function cleanAuthFromUrl(): void {
+
+    // 1. Check browser environment
+    // 2. Remove auth parameter from URL after use
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Check browser environment
+    if (!browser) return;
+    
+    // [ STEP 2. ] - Clean URL after auth code is consumed
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('auth')) {
+        url.searchParams.delete('auth');
+        const cleanUrl = url.pathname + (url.search || '');
+        window.history.replaceState(null, '', cleanUrl);
+    }
+}
+
+export function redirectToHome(): void {
+
+    // 1. Check browser environment
+    // 2. Navigate to home page
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Check browser environment
+    if (!browser) return;
+    
+    // [ STEP 2. ] - Navigate to home page
+    window.location.href = '/';
+}
+
+export function handlePageReload(): void {
+
+    // 1. Check browser environment
+    // 2. Set up beforeunload listener
+    // 3. Clear auth state if no auth param
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Check browser environment
+    if (!browser) return;
+    
+    // [ STEP 2. ] - Set up beforeunload listener (disabled for development)
+    // window.addEventListener('beforeunload', () => {
+    //     clearAuthState();
+    // });
+    
+    // [ STEP 3. ] - Only clear auth state on actual page reload (not after auth flow)
+    // Note: Don't clear auth just because URL has no auth param - it gets removed after successful auth
+}
+
+export function completeAuthFlow(): void {
+
+    // 1. Set authenticated state
+    // 2. Clean URL from auth parameters
+    // 3. Set auto-logout timer
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Set authenticated state
+    setAuthenticated(true);
+    
+    // [ STEP 2. ] - Clean URL from auth parameters
+    cleanAuthFromUrl();
+    
+    // [ STEP 3. ] - Set auto-logout timer
+    console.log('🔐 Auth session started - will auto-logout in 2 hours');
+    setTimeout(() => {
+        console.log('⏰ Auth session expired - logging out');
+        clearAuthState();
+    }, 2 * 60 * 60 * 1000); // 2 hours for development
+}
+
+if (browser) {
+    handlePageReload();
+}

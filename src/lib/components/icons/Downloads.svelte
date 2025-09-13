@@ -20,16 +20,11 @@
 	function handleMouseEnter() {
 		isHovered = true;
 	}
-
-	function handleMouseLeave() {
-		isHovered = false;
-	}
 </script>
 
 <div
 	class={className}
 	onmouseenter={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
 	aria-label="cloud-download"
 	role="img"
 >
@@ -58,10 +53,10 @@
 	}
 	g.animate path {
 		transform: translateY(2px);
-		transition: transform 300ms ease-in-out;
+		transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 	g path {
 		transform: translateY(0);
-		transition: transform 300ms ease-in-out;
+		transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 </style>

@@ -20,10 +20,6 @@
 	function handleMouseEnter() {
 		isHovered = true;
 	}
-
-	function handleMouseLeave() {
-		isHovered = false;
-	}
 </script>
 
 <div
@@ -31,7 +27,6 @@
 	aria-label="refresh-ccw"
 	role="img"
 	onmouseenter={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
 >
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +53,7 @@
 		display: inline-block;
 	}
 	.refresh-icon {
-		transition: transform 300ms ease-in-out;
+		transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 		transform-origin: center;
 	}
 

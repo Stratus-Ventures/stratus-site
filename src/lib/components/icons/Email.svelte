@@ -20,11 +20,8 @@
 	function handleMouseEnter() {
 		if (isHovered) return;
 		isHovered = true;
-
-		setTimeout(() => {
-			isHovered = false;
-		}, 1200);
 	}
+
 </script>
 
 <div class={className} aria-label="send" role="img" onmouseenter={handleMouseEnter}>
@@ -60,7 +57,8 @@
 
 	.animate-group {
 		transform-origin: center;
-		animation: sendAnimation 1.2s ease-in-out;
+		animation: sendAnimation 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
 	@keyframes sendAnimation {

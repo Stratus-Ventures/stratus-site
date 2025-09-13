@@ -12,26 +12,26 @@
     let { label, href, variant = 'filled', shimmer = false, onClick, type = 'button' }: Props = $props();
 
     // 1. Compute button classes based on variant
-    // 2. Handle shimmer animation with CSS-only approach
-    // 3.Handle width adjustment
+    // 2. Handle shimmer animation with CSS-only approach  
+    // 3. Handle width adjustment
 
-    // ----------------------------------------------------------- //
+    // ------------------------------------------------------------------- //
 
-    // [ STEP 1. ]
+    // [ STEP 1. ] - Compute button classes based on variant
     let classes = $derived(`
         flex w-full sm:w-fit h-fit items-center justify-center relative
-        rounded-lg button-label px-6 py-3
+        rounded-lg button-label px-6 py-3 select-none cursor-pointer
         ${variant === 'outlined'
             ? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
             : 'bg-button-bg border-1 hover:bg-button-bg-hover border-button-bg text-button-fg'}
     `);
 
-    // [ STEP 2. ]
+    // [ STEP 2. ] - Handle shimmer animation with CSS-only approach
     let shimmerClasses = $derived(
         shimmer && variant === 'filled' ? 'shimmer-text relative' : 'relative'
     );
 
-    // [ STEP 3. ]
+    // [ STEP 3. ] - Handle width adjustment
     let shimmerWidth = $derived.by(() => {
         if (typeof window === 'undefined') return '200%';
         // Use 300% for mobile (full-width buttons) to maintain speed
@@ -123,4 +123,16 @@
             background-position: -60% 0;
         }
     }
+
+    @media (max-width: 640px) {
+        @keyframes shimmer {
+            0% {
+                background-position: 120% 0;
+            }
+            100% {
+                background-position: -60% 0;
+            }
+        }
+    }
+
 </style>
