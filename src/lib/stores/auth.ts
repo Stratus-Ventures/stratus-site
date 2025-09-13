@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import { goto } from '$app/navigation';
 
 //  A U T H   S T O R E  ------------------------------------------------------------- //
 
@@ -45,34 +46,34 @@ export function clearAuthState(): void {
 export function cleanAuthFromUrl(): void {
 
     // 1. Check browser environment
-    // 2. Remove auth parameter from URL after use
+    // 2. Clean URL after auth code is consumed using SvelteKit navigation
 
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Check browser environment
     if (!browser) return;
     
-    // [ STEP 2. ] - Clean URL after auth code is consumed
+    // [ STEP 2. ] - Use SvelteKit's goto to clean URL
     const url = new URL(window.location.href);
     if (url.searchParams.has('auth')) {
         url.searchParams.delete('auth');
-        const cleanUrl = url.pathname + (url.search || '');
-        window.history.replaceState(null, '', cleanUrl);
+        const cleanPath = url.pathname + (url.search ? url.search : '');
+        goto(cleanPath, { replaceState: true });
     }
 }
 
 export function redirectToHome(): void {
 
     // 1. Check browser environment
-    // 2. Navigate to home page
+    // 2. Navigate to home page using SvelteKit navigation
 
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Check browser environment
     if (!browser) return;
     
-    // [ STEP 2. ] - Navigate to home page
-    window.location.href = '/';
+    // [ STEP 2. ] - Use SvelteKit's goto for navigation
+    goto('/');
 }
 
 export function handlePageReload(): void {
