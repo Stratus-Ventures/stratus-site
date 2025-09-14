@@ -65,8 +65,8 @@ export const actions: Actions = {
         const tagline = formData.get('tagline') as string;
         const url = formData.get('url') as string;
 
-        if (!name || !tagline || !url) {
-            return fail(400, { error: 'All fields are required' });
+        if (!name || !tagline) {
+            return fail(400, { error: 'Product name and tagline are required' });
         }
 
         try {
@@ -91,8 +91,8 @@ export const actions: Actions = {
         const tagline = formData.get('tagline') as string;
         const url = formData.get('url') as string;
 
-        if (!id || !name || !tagline || !url) {
-            return fail(400, { error: 'All fields are required' });
+        if (!id || !name || !tagline) {
+            return fail(400, { error: 'Product name and tagline are required' });
         }
 
         try {

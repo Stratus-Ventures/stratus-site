@@ -17,11 +17,27 @@ export { default as Downloads } from './components/icons/Downloads.svelte';
 export { default as Subscription } from './components/icons/Subscription.svelte';
 export { default as Users } from './components/icons/Users.svelte';
 export { default as Logo } from './components/icons/Logo.svelte';
+export {default as CloseDrawer } from './components/icons/CloseDrawer.svelte';
 
 
 //  S T O R E S  ----------------------------------------------------------------- //
 
 export { authStore, completeAuthFlow, clearAuthState, setAuthenticated } from './stores/auth';
+
+
+//  S T A T E  --------------------------------------------------- //
+
+export { 
+    handleEditProduct, 
+    handleAddProduct,
+    addProduct,
+    saveProduct, 
+    deleteProduct, 
+    handleCancelEdit,
+    getShimmerWidth 
+} from './components/product-list/productState';
+
+export type { ProductState, ProductFormData } from './components/product-list/productState';
 
 
 //  T Y P E S  ------------------------------------------------------------------- //

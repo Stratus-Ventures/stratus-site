@@ -1,11 +1,18 @@
 <script lang="ts">
-    import { authStore } from '$lib';
-    import type { Product } from '$lib/types';
-    import Button from '../Button.svelte';
+    import { 
+        authStore,
+        Button,
+        handleEditProduct,
+        handleAddProduct,
+        addProduct,
+        saveProduct,
+        deleteProduct,
+        handleCancelEdit, 
+        getShimmerWidth
+    } from '$lib';
+    import type { Product, ProductState } from '$lib';
     import ProductItem from './ProductItem.svelte';
-    import ProductForm from './ProductForm.svelte';
-    import type { ProductState } from './productState';
-    import { handleSaveProduct, handleDeleteProduct, handleCancelEdit, getShimmerWidth } from './productState';
+    import ProductTray from './ProductTray.svelte';
 
     interface Props {
         products: Product[];
@@ -50,61 +57,85 @@
         }
     });
 
+    // Tray state
+    let isTrayOpen = $derived(productState.editingProductId !== null || productState.isAddingProduct);
+    let editingProduct = $derived(
+        productState.editingProductId 
+            ? products.find(p => p.id === productState.editingProductId) || null
+            : null
+    );
+
     //   U T I L I T Y   F U N C T I O N S  ------------------------------ //
 
     let shimmerWidth = $derived.by(() => getShimmerWidth());
+
+    // Handle tray save (either edit or add)
+    async function handleTraySave(product: Product | null, state: ProductState) {
+        if (product) {
+            // Editing existing product
+            await saveProduct(product, state);
+        } else {
+            // Adding new product
+            await addProduct(state);
+        }
+    }
 </script>
 
 <div class="
     flex flex-col w-full h-fit
-    items-center justify-center select-none
-    border-border border-b-1
+    items-center justify-center gap-12
 ">
-    {#each products as product}
-        <div class="w-full border-t-1 border-border"></div>
-        
-        <ProductItem 
-            {product} 
-            {canEdit} 
-            bind:state={productState}
-        >
-            {#snippet editButtons()}
-                <div class="flex gap-2">
-                    <Button onClick={() => handleSaveProduct(productState)} label="Save" variant="filled" />
-                    <Button onClick={() => handleDeleteProduct(product.id)} label="Delete" variant="outlined" />
-                    <Button onClick={() => handleCancelEdit(productState)} label="Cancel" variant="outlined" />
-                </div>
-            {/snippet}
-        </ProductItem>
-    {/each}
+    <div class="
+        flex flex-col w-full h-fit
+        items-center justify-center select-none
+        border-border border-b-1
+    ">
+        {#each products as product}
+            <div class="w-full border-t-1 border-border"></div>
+            
+            <ProductItem 
+                {product} 
+                {canEdit} 
+                bind:state={productState}
+                onEdit={handleEditProduct}
+            />
+
+        {/each}
+
+        <!-- STATE :: ERROR || NO PRODUCTS -->
+        {#if products.length === 0}
+            <div class="w-full border-t-1 border-border"></div>
+            <div class="
+                flex flex-col w-full h-fit
+                items-center justify-center
+                py-9
+            ">
+                {#if error}
+                    <h3 class="title text-secondary-fg text-center">{error}</h3>
+                {:else}
+                    <h3 class="title text-secondary-fg text-center">No Products Yet</h3>
+                {/if}
+            </div>
+        {/if}
+    </div>
 
     <!-- STATE :: EDIT VIEW :: ADD NEW PRODUCT (SHOW AFTER ALL PRODUCTS) -->
     {#if canEdit && products.length > 0}
-        <div class="w-full border-t-1 border-border"></div>
-        
-        <ProductForm bind:state={productState} {shimmerWidth}>
-            {#snippet buttons()}
-                <div class="flex gap-2">
-                    <Button onClick={() => handleSaveProduct(productState)} label="Save" variant="filled" />
-                    <Button onClick={() => handleCancelEdit(productState)} label="Cancel" variant="outlined" />
-                </div>
-            {/snippet}
-        </ProductForm>
-    {/if}
-
-    <!-- STATE :: ERROR || NO PRODUCTS -->
-    {#if products.length === 0}
-        <div class="w-full border-t-1 border-border"></div>
-        <div class="
-            flex flex-col w-full h-fit
-            items-center justify-center
-            py-9
-        ">
-            {#if error}
-                <h3 class="title text-secondary-fg text-center">{error}</h3>
-            {:else}
-                <h3 class="title text-secondary-fg text-center">No Products Yet</h3>
-            {/if}
-        </div>
+        <Button 
+            onClick={() => handleAddProduct(productState)} 
+            label="Add New Product" 
+            shimmer={true}
+        />
     {/if}
 </div>
+
+
+<!-- Product Tray -->
+<ProductTray 
+    isOpen={isTrayOpen}
+    product={editingProduct}
+    bind:state={productState}
+    onSave={handleTraySave}
+    onDelete={deleteProduct}
+    onCancel={handleCancelEdit}
+/>

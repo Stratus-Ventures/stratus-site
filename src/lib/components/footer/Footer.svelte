@@ -22,12 +22,14 @@
         <IconButton 
             icon={Email} 
             href="mailto:contact@stratusventures.com" 
-            ariaLabel="Send email" 
+            ariaLabel="Send email"
+            size={20}
         />
         <IconButton 
             icon={X} 
             href="https://x.com/stratusventures" 
-            ariaLabel="Follow on X" 
+            ariaLabel="Follow on X"
+            size={20}
         />
     </div>
     
