@@ -36,14 +36,6 @@
     // [ STEP 2. ] - Determine if edit mode is available
     let canEdit = $derived(isAuthenticated || authState.isAuthenticated);
     
-    // [ STEP 3. ] - Handle authentication logging and show auth button
-    $effect(() => {
-        if (canEdit) {
-            console.log('✅ ProductList: Edit mode available');
-        } else {
-            console.log('ℹ️  ProductList: Read-only mode');
-        }
-    });
 
     //   S T A T E   M A N A G E M E N T  ------------------------------ //
 

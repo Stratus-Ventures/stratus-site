@@ -20,9 +20,7 @@
 
     // [ STEP 1. ] - Start editing this product (opens tray)
     function startEdit() {
-        console.log('🔧 Starting edit for product:', product.name);
         onEdit(product, state);
-        console.log('🔧 Edit state after:', state.editingProductId, state.isAddingProduct);
     }
 
 </script>

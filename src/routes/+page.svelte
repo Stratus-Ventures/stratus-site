@@ -16,15 +16,10 @@
     onMount(() => {
         // [ STEP 1. ] - Handle successful authentication
         if (data.auth?.isAuthenticated) {
-            console.log('✅ Authentication successful!');
-            if (data.auth.newCode) {
-                console.log(`🔐 New auth code: ${data.auth.newCode}`);
-            }
             completeAuthFlow();
         } 
         // [ STEP 2. ] - Handle authentication errors
         else if (data.auth?.error) {
-            console.error('❌ Authentication failed:', data.auth.error);
             // [ STEP 3. ] - Manage auth flow completion
             clearAuthState();
         }

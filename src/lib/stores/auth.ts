@@ -26,13 +26,12 @@ export function setAuthenticated(isAuth: boolean): void {
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Set authentication state and timestamp
-    console.log(`🔐 Auth state changed: ${isAuth ? 'AUTHENTICATED' : 'LOGGED OUT'}`);
     authStore.set({
         isAuthenticated: isAuth,
         timestamp: isAuth ? Date.now() : null
     });
 }
-
+are 
 export function clearAuthState(): void {
 
     // 1. Reset auth state to initial values
@@ -111,9 +110,7 @@ export function completeAuthFlow(): void {
     cleanAuthFromUrl();
     
     // [ STEP 3. ] - Set auto-logout timer
-    console.log('🔐 Auth session started - will auto-logout in 2 hours');
     setTimeout(() => {
-        console.log('⏰ Auth session expired - logging out');
         clearAuthState();
     }, 2 * 60 * 60 * 1000); // 2 hours for development
 }

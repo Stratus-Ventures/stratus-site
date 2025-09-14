@@ -113,7 +113,6 @@ export async function saveProduct(product: Product, state: ProductState): Promis
         state.formData = { name: '', tagline: '', url: '' };
         
     } catch (error) {
-        console.error('Error saving product:', error);
         alert('Error saving product changes');
     }
 }
@@ -166,7 +165,6 @@ export async function deleteProduct(product: Product, state: ProductState): Prom
         state.editingProductId = null;
         
     } catch (error) {
-        console.error('Error deleting product:', error);
         alert('Error deleting product');
     }
 }
@@ -242,7 +240,6 @@ export async function addProduct(state: ProductState): Promise<void> {
         state.formData = { name: '', tagline: '', url: '' };
         
     } catch (error) {
-        console.error('Error adding product:', error);
         alert('Error adding product');
     }
 }
