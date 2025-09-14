@@ -31,7 +31,7 @@ export function setAuthenticated(isAuth: boolean): void {
         timestamp: isAuth ? Date.now() : null
     });
 }
-are 
+ 
 export function clearAuthState(): void {
 
     // 1. Reset auth state to initial values
