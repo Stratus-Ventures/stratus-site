@@ -1,4 +1,6 @@
-import { db, totalEventCount } from '$lib/server';
+import { db, totalEventCount, stratusMetrics, stratusProducts } from '$lib/server';
+import { eq } from 'drizzle-orm';
+import type { StratusProduct } from '$lib/types';
 
 // ============================================================================
 // METRICS CONFIGURATION
@@ -36,6 +38,15 @@ export const METRICS_CONFIG = {
 export interface MetricItem {
     name: string;
     value: number;
+}
+
+export interface ExternalMetric {
+    id?: string;
+    event_type: 'user_created' | 'download_started' | 'subscription_activated';
+    origin_lat: number;
+    origin_long: number;
+    city_code: string;
+    country_code: string;
 }
 
 type MetricConfigKey = keyof typeof METRICS_CONFIG;
@@ -101,4 +112,159 @@ export function getMetricsConfig() {
             .filter(([_, config]) => !config.enabled)
             .map(([key, config]) => ({ key, ...config }))
     };
+}
+
+// ============================================================================
+// EXTERNAL METRICS SYNCING
+// ============================================================================
+
+/**
+ * Fetches metrics from a product's /stratus-metrics endpoint
+ */
+export async function fetchProductMetrics(productUrl: string): Promise<ExternalMetric[]> {
+    try {
+        // Ensure URL ends with /stratus-metrics
+        const metricsUrl = productUrl.endsWith('/')
+            ? `${productUrl}stratus-metrics`
+            : `${productUrl}/stratus-metrics`;
+
+        const response = await fetch(metricsUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'Stratus-Central-Control'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch metrics: ${response.status} ${response.statusText}`);
+        }
+
+        const metrics = await response.json();
+
+        // Validate that we received an array
+        if (!Array.isArray(metrics)) {
+            throw new Error('Invalid metrics format: expected array');
+        }
+
+        return metrics;
+    } catch (error) {
+        console.error(`Error fetching metrics from ${productUrl}:`, error);
+        throw error;
+    }
+}
+
+/**
+ * Stores external metrics in the local database
+ */
+export async function storeProductMetrics(
+    productId: string,
+    sourceId: string,
+    externalMetrics: ExternalMetric[],
+    database = db
+): Promise<void> {
+    try {
+        for (const metric of externalMetrics) {
+            // Create a unique source_id for each metric
+            const metricSourceId = `${sourceId}_${metric.event_type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+            await database.insert(stratusMetrics).values({
+                source_id: metricSourceId,
+                event_type: metric.event_type,
+                origin_lat: metric.origin_lat,
+                origin_long: metric.origin_long,
+                city_code: metric.city_code,
+                country_code: metric.country_code,
+                product_id: productId
+            });
+        }
+
+        console.log(`Successfully stored ${externalMetrics.length} metrics for product ${sourceId}`);
+    } catch (error) {
+        console.error(`Error storing metrics for product ${sourceId}:`, error);
+        throw error;
+    }
+}
+
+/**
+ * Syncs metrics for a single product
+ */
+export async function syncProductMetrics(product: StratusProduct, database = db): Promise<{
+    success: boolean;
+    metricsCount?: number;
+    error?: string;
+}> {
+    try {
+        if (!product.url) {
+            return {
+                success: false,
+                error: 'Product URL is required'
+            };
+        }
+
+        const externalMetrics = await fetchProductMetrics(product.url);
+        await storeProductMetrics(product.id, product.source_id, externalMetrics, database);
+
+        return {
+            success: true,
+            metricsCount: externalMetrics.length
+        };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+/**
+ * Syncs metrics for all products
+ */
+export async function syncAllProductMetrics(database = db): Promise<{
+    totalProducts: number;
+    successfulSyncs: number;
+    failedSyncs: number;
+    results: Array<{
+        productName: string;
+        success: boolean;
+        metricsCount?: number;
+        error?: string;
+    }>;
+}> {
+    try {
+        // Get all products
+        const products = await database.select().from(stratusProducts);
+
+        const results = [];
+        let successfulSyncs = 0;
+        let failedSyncs = 0;
+
+        for (const product of products) {
+            const result = await syncProductMetrics(product, database);
+
+            results.push({
+                productName: product.name,
+                success: result.success,
+                metricsCount: result.metricsCount,
+                error: result.error
+            });
+
+            if (result.success) {
+                successfulSyncs++;
+            } else {
+                failedSyncs++;
+            }
+        }
+
+        return {
+            totalProducts: products.length,
+            successfulSyncs,
+            failedSyncs,
+            results
+        };
+    } catch (error) {
+        console.error('Error syncing all product metrics:', error);
+        throw error;
+    }
 }

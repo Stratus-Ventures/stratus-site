@@ -70,13 +70,17 @@ function formatUrl(url: string): string {
 }
 
 // [ STEP 3. ] - Validate required form fields with browser alerts
-function validateRequired(name: string, tagline: string): boolean {
+function validateRequired(name: string, tagline: string, url: string): boolean {
     if (!name.trim()) {
         alert('Product name is required');
         return false;
     }
     if (!tagline.trim()) {
         alert('Product tagline is required');
+        return false;
+    }
+    if (!url.trim()) {
+        alert('Product URL is required');
         return false;
     }
     return true;
@@ -109,7 +113,7 @@ export function handleAddProduct(state: ProductState): void {
 
 // [ STEP 3. ] - Save product changes (via enhanced form submission)
 export async function saveProduct(product: Product, state: ProductState): Promise<void> {
-    if (!validateRequired(state.formData.name, state.formData.tagline)) return;
+    if (!validateRequired(state.formData.name, state.formData.tagline, state.formData.url)) return;
 
     try {
         await submitForm('?/updateProduct', {
@@ -140,7 +144,7 @@ export async function deleteProduct(product: Product, state: ProductState): Prom
 
 // [ STEP 5. ] - Add new product (via enhanced form submission)
 export async function addProduct(state: ProductState): Promise<void> {
-    if (!validateRequired(state.formData.name, state.formData.tagline)) return;
+    if (!validateRequired(state.formData.name, state.formData.tagline, state.formData.url)) return;
 
     try {
         await submitForm('?/createProduct', {

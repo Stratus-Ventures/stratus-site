@@ -1,5 +1,5 @@
 import { getFormattedProducts, processAuthFromUrl, logger, db } from '$lib/server';
-import { getMetrics } from '$lib/server/services/metrics';
+import { getMetrics, syncAllProductMetrics } from '$lib/server/services/metrics';
 import { createProduct, updateProduct, deleteProduct, validateProductData } from '$lib/server/services/products';
 import type { PageServerLoad, Actions } from './$types';
 import type { Product } from '$lib/types';
@@ -16,8 +16,18 @@ export const load: PageServerLoad = async ({ url }) => {
         const products: Product[] = await getFormattedProducts(db);
 
         // ================================================================
-        // METRICS DATA
+        // METRICS SYNC & DATA
         // ================================================================
+        // First sync metrics from all products
+        try {
+            logger.info('Auto-syncing metrics on page load');
+            await syncAllProductMetrics();
+        } catch (error) {
+            logger.error('Failed to auto-sync metrics on page load', error);
+            // Continue loading page even if sync fails
+        }
+
+        // Then get the updated metrics for display
         const metrics = await getMetrics();
 
         // ================================================================
@@ -128,6 +138,35 @@ export const actions: Actions = {
         } catch (error) {
             logger.error('Failed to delete product', error);
             return fail(500, { error: 'Failed to delete product' });
+        }
+    },
+
+    // ====================================================================
+    // SYNC METRICS
+    // ====================================================================
+    async syncMetrics() {
+        try {
+            logger.info('Starting metrics sync for all products');
+            const result = await syncAllProductMetrics();
+
+            logger.info('Metrics sync completed', {
+                totalProducts: result.totalProducts,
+                successful: result.successfulSyncs,
+                failed: result.failedSyncs
+            });
+
+            return {
+                success: true,
+                result: {
+                    totalProducts: result.totalProducts,
+                    successfulSyncs: result.successfulSyncs,
+                    failedSyncs: result.failedSyncs,
+                    results: result.results
+                }
+            };
+        } catch (error) {
+            logger.error('Failed to sync metrics', error);
+            return fail(500, { error: 'Failed to sync metrics' });
         }
     }
 };

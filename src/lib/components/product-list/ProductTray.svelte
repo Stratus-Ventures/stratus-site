@@ -113,10 +113,11 @@
                             transition-colors"
                     />
 
-                    <input 
+                    <input
                         bind:value={state.formData.url}
                         placeholder="https://example.com"
-                        class="w-full px-4 py-3 border border-border rounded-lg 
+                        required
+                        class="w-full px-4 py-3 border border-border rounded-lg
                             bg-secondary-bg text-primary-fg
                             hover:bg-transparent
                             focus:border-secondary-fg focus:outline-none

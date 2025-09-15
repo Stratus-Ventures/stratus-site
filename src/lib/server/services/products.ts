@@ -8,14 +8,14 @@ import { eq } from 'drizzle-orm';
 export interface CreateProductData {
     name: string;
     tagline: string;
-    url?: string;
+    url: string;
 }
 
 export interface UpdateProductData {
     id: string;
     name: string;
     tagline: string;
-    url?: string;
+    url: string;
 }
 
 /**
@@ -24,11 +24,14 @@ export interface UpdateProductData {
 export async function createProduct(data: CreateProductData, database = db) {
     const { name, tagline, url } = data;
 
+    // Generate source_id from product name-domain format (replace . with -)
+    const sourceId = name.toLowerCase().replace(/\./g, '-');
+
     const result = await database.insert(stratusProducts).values({
-        source_id: `product_${Date.now()}`,
+        source_id: sourceId,
         name,
         tagline,
-        url: url || '' // Ensure url is never undefined
+        url
     }).returning();
 
     return result;
@@ -41,7 +44,7 @@ export async function updateProduct(data: UpdateProductData, database = db) {
     const { id, name, tagline, url } = data;
 
     await database.update(stratusProducts)
-        .set({ name, tagline, url: url || '' })
+        .set({ name, tagline, url })
         .where(eq(stratusProducts.id, id));
 }
 
@@ -65,10 +68,10 @@ export function validateProductData(formData: FormData): {
     const url = formData.get('url') as string;
     const id = formData.get('id') as string;
 
-    if (!name || !tagline) {
+    if (!name || !tagline || !url) {
         return {
             isValid: false,
-            error: 'Product name and tagline are required'
+            error: 'Product name, tagline, and URL are required'
         };
     }
 
