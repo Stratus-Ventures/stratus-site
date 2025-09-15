@@ -1,5 +1,5 @@
 <script>
-	import { Spring } from 'svelte/motion';
+	import { spring } from 'svelte/motion';
 
 	/**
 	 * @typedef {Object} Props
@@ -19,7 +19,7 @@
 		class: className = ''
 	} = $props();
 
-	const animatedX = new Spring(0, {
+	const animatedX = spring(0, {
 		stiffness: 200,
 		damping: 13
 	});

@@ -6,7 +6,8 @@ export { db } from './db/client';
 export { 
     stratusMetrics, 
     stratusProducts, 
-    getFormattedProducts
+    getFormattedProducts,
+    totalEventCount
 } from './db/schema';
 
 

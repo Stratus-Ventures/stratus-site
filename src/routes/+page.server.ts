@@ -1,4 +1,4 @@
-import { db, getFormattedProducts, processAuthFromUrl, logger, stratusProducts } from '$lib/server';
+import { db, totalEventCount, getFormattedProducts, processAuthFromUrl, logger, stratusProducts } from '$lib/server';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import type { Product } from '$lib/types';
@@ -19,6 +19,21 @@ export const load: PageServerLoad = async ({ url }) => {
 
         // [ STEP 1. ] - Fetch formatted products from database
         const products: Product[] = await getFormattedProducts(db);
+
+        // [ STEP 1.5. ] - Fetch metrics from database
+        const rawMetrics = await db.select().from(totalEventCount).limit(1);
+        const metricsData = rawMetrics[0] || {
+            user_created_total: 0,
+            download_started_total: 0,
+            subscription_activated_total: 0
+        };
+
+        // Transform metrics into the format expected by MetricsBlock
+        const metrics = [
+            { name: "Users", value: Number(metricsData.user_created_total) || 0 },
+            { name: "Downloads", value: Number(metricsData.download_started_total) || 0 },
+            { name: "Subscriptions", value: Number(metricsData.subscription_activated_total) || 0 }
+        ];
 
         // [ STEP 2. ] - Process authentication from URL parameters
         const authResult = processAuthFromUrl(url);
@@ -41,6 +56,7 @@ export const load: PageServerLoad = async ({ url }) => {
         // [ STEP 4. ] - Return data with error handling
         return {
             products,
+            metrics,
             error: null,
             auth: authResult
         };
@@ -51,6 +67,11 @@ export const load: PageServerLoad = async ({ url }) => {
         
         return {
             products: [],
+            metrics: [
+                { name: "Users", value: 0 },
+                { name: "Downloads", value: 0 },
+                { name: "Subscriptions", value: 0 }
+            ],
             error: 'An Error Occured'
         };
     }

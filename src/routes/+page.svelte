@@ -1,6 +1,6 @@
 <script lang="ts">
     
-    import { Button, Footer, Logo, ProductList } from '$lib';
+    import { Button, Footer, Logo, ProductList, MetricsBlock } from '$lib';
     import type { PageData } from './$types';
     import { completeAuthFlow, clearAuthState } from '$lib';
     import { onMount } from 'svelte';
@@ -44,7 +44,7 @@
         <!-- HERO SECTION -->
         <section class="
             flex flex-col sm:flex-row w-full h-fit
-            items-center justify-start
+            items-center justify-start gap-5 sm:gap-8
         ">
 
             <!-- CONTENT CONTAINER -->
@@ -103,7 +103,15 @@
                 <!-- 3D GLOBE -->
 
                 <!-- METRICS BLOCK -->
-
+                <MetricsBlock metrics={[
+                    { name: "Users", value: 123 },
+                    { name: "Downloads", value: 666 },
+                    { name: "Subscriptions", value: 777 },
+                    { name: "Metric", value: 999 },
+                    { name: "Metric2", value: 1000 },
+                    { name: "Another Metric2", value: 1000 },
+                    { name: "Another Metric2", value: 1000 },
+                ]}/>
             </div>
 
         </section>

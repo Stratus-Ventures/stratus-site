@@ -137,4 +137,16 @@
         font-weight: 500;
         @apply text-base leading-tight tracking-tight;
     }
+
+    .small-medium {
+        font-family: var(--font-sans);
+        font-weight: 500;
+        @apply text-sm leading-tight tracking-tight;
+    }
+
+    .small {
+        font-family: var(--font-sans);
+        font-weight: 400;
+        @apply text-sm leading-tight tracking-tight;
+    }
 }

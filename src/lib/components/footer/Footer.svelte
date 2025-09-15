@@ -12,7 +12,7 @@
 ">
 
     <span class=" 
-        paragraph text-secondary-fg 
+        small text-secondary-fg 
         align-middle select-none
         mr-3
     ">© 2025 Stratus Ventures LLC</span>
@@ -23,13 +23,13 @@
             icon={Email} 
             href="mailto:jason@stratus-ventures.org" 
             ariaLabel="Send email"
-            size={20}
+            size={18}
         />
         <IconButton 
             icon={X} 
             href="https://x.com/jasoncoawette" 
             ariaLabel="Follow on X"
-            size={20}
+            size={18}
         />
     </div>
     

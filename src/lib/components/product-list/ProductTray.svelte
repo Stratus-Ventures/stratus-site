@@ -67,7 +67,8 @@
         transition:slide={{ duration: 300 }}
     >
         <div 
-            class="w-full max-w-4xl mx-auto bg-primary-bg border-t-1 border-border rounded-t-2xl px-5 sm:px-8 pt-5 sm:pt-8 pb-24" 
+            class="w-full max-w-4xl mx-auto bg-primary-bg border-t-1 border-border rounded-t-2xl
+            px-5 sm:px-8 pt-5 sm:pt-8 pb-24 shadow-lg" 
             role="dialog" 
             aria-modal="true"
             tabindex="-1"
