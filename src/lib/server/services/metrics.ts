@@ -119,14 +119,14 @@ export function getMetricsConfig() {
 // ============================================================================
 
 /**
- * Fetches metrics from a product's /stratus-metrics endpoint
+ * Fetches metrics from a product's /api/stratus-metrics endpoint
  */
 export async function fetchProductMetrics(productUrl: string): Promise<ExternalMetric[]> {
     try {
-        // Ensure URL ends with /stratus-metrics
+        // Ensure URL ends with /api/stratus-metrics
         const metricsUrl = productUrl.endsWith('/')
-            ? `${productUrl}stratus-metrics`
-            : `${productUrl}/stratus-metrics`;
+            ? `${productUrl}api/stratus-metrics`
+            : `${productUrl}/api/stratus-metrics`;
 
         console.log(`🔍 Fetching metrics from: ${metricsUrl}`);
 
@@ -148,6 +148,17 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
                 console.log(`⚠️  Metrics endpoint not found for ${productUrl} (404) - skipping`);
                 return [];
             }
+
+            // For 500 errors, try to get more details from response body
+            if (response.status === 500) {
+                try {
+                    const errorText = await response.text();
+                    console.error(`❌ Server error (500) from ${productUrl}: ${errorText.substring(0, 200)}`);
+                } catch {
+                    console.error(`❌ Server error (500) from ${productUrl}: Unable to read error details`);
+                }
+            }
+
             throw new Error(`Failed to fetch metrics: ${response.status} ${response.statusText}`);
         }
 
