@@ -1,4 +1,5 @@
-import { db, totalEventCount, stratusMetrics, stratusProducts } from '$lib/server';
+import { db, totalEventCount, stratusMetrics, stratusProducts, logger } from '$lib/server';
+import { eq, and } from 'drizzle-orm';
 import type { StratusProduct } from '$lib/types';
 
 // ============================================================================
@@ -199,7 +200,7 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
 }
 
 /**
- * Stores external metrics in the local database
+ * Stores external metrics in the local database, avoiding duplicates
  */
 export async function storeProductMetrics(
     productId: string,
@@ -208,6 +209,11 @@ export async function storeProductMetrics(
     database = db
 ): Promise<void> {
     try {
+        // Clear existing metrics for this product to avoid duplicates
+        await database.delete(stratusMetrics)
+            .where(eq(stratusMetrics.product_id, productId));
+
+        let storedCount = 0;
         for (const metric of externalMetrics) {
             // Use the product's source_id directly (each metric has its own UUID for uniqueness)
             await database.insert(stratusMetrics).values({
@@ -219,11 +225,12 @@ export async function storeProductMetrics(
                 country_code: metric.country_code,
                 product_id: productId
             });
+            storedCount++;
         }
 
-        console.log(`Successfully stored ${externalMetrics.length} metrics for product ${sourceId}`);
+        logger.info(`Successfully stored ${storedCount} metrics for product ${sourceId} (replaced existing)`);
     } catch (error) {
-        console.error(`Error storing metrics for product ${sourceId}:`, error);
+        logger.error(`Error storing metrics for product ${sourceId}:`, error);
         throw error;
     }
 }

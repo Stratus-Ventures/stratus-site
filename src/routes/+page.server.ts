@@ -18,19 +18,9 @@ export const load: PageServerLoad = async ({ url }) => {
         // ================================================================
         // METRICS SYNC & DATA
         // ================================================================
-        // First sync metrics from all products
-        try {
-            logger.info('Auto-syncing metrics on page load');
-            const syncResult = await syncAllProductMetrics();
-            logger.info('Metrics sync completed', {
-                totalProducts: syncResult.totalProducts,
-                successful: syncResult.successfulSyncs,
-                failed: syncResult.failedSyncs
-            });
-        } catch (error) {
-            logger.error('Failed to auto-sync metrics on page load', error);
-            // Continue loading page even if sync fails
-        }
+        // Skip auto-sync on page load to prevent duplicate metrics
+        // Metrics will only be synced when products are added/updated
+        // ================================================================
 
         // Then get the updated metrics for display
         const metrics = await getMetrics();
