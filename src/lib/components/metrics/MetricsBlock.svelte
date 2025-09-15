@@ -19,7 +19,7 @@
 
 </script>
 
-<div class={cn("flex flex-wrap gap-5 w-full h-fit", className)}>
+<div class={cn("flex flex-wrap gap-5 w-full h-fit justify-start sm:justify-center items-center", className)}>
 	{#each displayMetrics as metric, index}
 		<Metric name={metric.name} data={metric.value} {index} />
 	{/each}

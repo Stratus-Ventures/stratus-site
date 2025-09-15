@@ -14,9 +14,9 @@
 {#if showTooltip}
     <div
         class="
-            absolute bottom-full z-10 mb-3 rounded-md px-3 py-1.5 whitespace-nowrap shadow-lg
+            absolute bottom-full z-10 mb-2 rounded-md px-3 py-1.5 whitespace-nowrap shadow-lg
             bg-button-bg text-button-fg small-medium
-            {isFirst ? 'left-[-3px] md:left-1/2 md:-translate-x-1/2' : 'left-1/2 -translate-x-1/2'}
+            {isFirst ? 'left-[1px] md:left-1/2 md:-translate-x-1/2' : 'left-1/2 -translate-x-1/2'}
         "
         in:fly={{ y: 4, duration: 300 }}
         out:fly={{ y: 4, duration: 300 }}
