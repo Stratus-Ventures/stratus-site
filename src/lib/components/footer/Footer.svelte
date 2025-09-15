@@ -21,13 +21,13 @@
         <ThemeToggle />
         <IconButton 
             icon={Email} 
-            href="mailto:contact@stratusventures.com" 
+            href="mailto:jason@stratus-ventures.org" 
             ariaLabel="Send email"
             size={20}
         />
         <IconButton 
             icon={X} 
-            href="https://x.com/stratusventures" 
+            href="https://x.com/jasoncoawette" 
             ariaLabel="Follow on X"
             size={20}
         />
