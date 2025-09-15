@@ -24,8 +24,9 @@ export interface UpdateProductData {
 export async function createProduct(data: CreateProductData, database = db) {
     const { name, tagline, url } = data;
 
-    // Generate source_id from product name-domain format (replace . with -)
-    const sourceId = name.toLowerCase().replace(/\./g, '-');
+    // Generate source_id from product URL domain (e.g., arvis.ar -> arvis-ar)
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+    const sourceId = urlObj.hostname.replace(/\./g, '-');
 
     const result = await database.insert(stratusProducts).values({
         source_id: sourceId,

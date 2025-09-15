@@ -210,11 +210,9 @@ export async function storeProductMetrics(
 ): Promise<void> {
     try {
         for (const metric of externalMetrics) {
-            // Create unique source_id for each metric while keeping product reference
-            const uniqueMetricId = `${sourceId}-${metric.event_type}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-
+            // Use the product's source_id directly (each metric has its own UUID for uniqueness)
             await database.insert(stratusMetrics).values({
-                source_id: uniqueMetricId,
+                source_id: sourceId,
                 event_type: metric.event_type,
                 origin_lat: metric.origin_lat,
                 origin_long: metric.origin_long,
