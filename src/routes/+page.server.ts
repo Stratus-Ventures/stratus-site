@@ -21,7 +21,12 @@ export const load: PageServerLoad = async ({ url }) => {
         // First sync metrics from all products
         try {
             logger.info('Auto-syncing metrics on page load');
-            await syncAllProductMetrics();
+            const syncResult = await syncAllProductMetrics();
+            logger.info('Metrics sync completed', {
+                totalProducts: syncResult.totalProducts,
+                successful: syncResult.successfulSyncs,
+                failed: syncResult.failedSyncs
+            });
         } catch (error) {
             logger.error('Failed to auto-sync metrics on page load', error);
             // Continue loading page even if sync fails

@@ -128,29 +128,63 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
             ? `${productUrl}stratus-metrics`
             : `${productUrl}/stratus-metrics`;
 
+        console.log(`🔍 Fetching metrics from: ${metricsUrl}`);
+
         const response = await fetch(metricsUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': 'Stratus-Central-Control'
-            }
+                'User-Agent': 'Stratus-Central-Control',
+                'Origin': 'https://stratus-ventures.org',
+                'Referer': 'https://stratus-ventures.org/'
+            },
+            // Add timeout to prevent hanging
+            signal: AbortSignal.timeout(10000) // 10 second timeout
         });
 
         if (!response.ok) {
+            // If 404, the endpoint doesn't exist yet - this is expected
+            if (response.status === 404) {
+                console.log(`⚠️  Metrics endpoint not found for ${productUrl} (404) - skipping`);
+                return [];
+            }
             throw new Error(`Failed to fetch metrics: ${response.status} ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.log(`⚠️  Non-JSON response from ${productUrl} - skipping`);
+            return [];
         }
 
         const metrics = await response.json();
 
         // Validate that we received an array
         if (!Array.isArray(metrics)) {
-            throw new Error('Invalid metrics format: expected array');
+            console.log(`⚠️  Invalid metrics format from ${productUrl} (expected array) - skipping`);
+            return [];
         }
 
+        console.log(`✅ Successfully fetched ${metrics.length} metrics from ${productUrl}`);
         return metrics;
     } catch (error) {
-        console.error(`Error fetching metrics from ${productUrl}:`, error);
-        throw error;
+        // Log different types of errors with appropriate severity
+        if (error instanceof Error) {
+            if (error.message.includes('ENOTFOUND') || error.message.includes('getaddrinfo')) {
+                console.log(`⚠️  Domain not found: ${productUrl} - skipping`);
+            } else if (error.message.includes('CERT_HAS_EXPIRED')) {
+                console.log(`⚠️  SSL certificate expired: ${productUrl} - skipping`);
+            } else if (error.message.includes('timeout')) {
+                console.log(`⚠️  Request timeout: ${productUrl} - skipping`);
+            } else {
+                console.error(`❌ Error fetching metrics from ${productUrl}:`, error.message);
+            }
+        } else {
+            console.error(`❌ Unknown error fetching metrics from ${productUrl}:`, error);
+        }
+
+        // Return empty array instead of throwing - allows other products to continue
+        return [];
     }
 }
 
@@ -165,11 +199,11 @@ export async function storeProductMetrics(
 ): Promise<void> {
     try {
         for (const metric of externalMetrics) {
-            // Create a unique source_id for each metric
-            const metricSourceId = `${sourceId}_${metric.event_type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            // Create unique source_id for each metric while keeping product reference
+            const uniqueMetricId = `${sourceId}-${metric.event_type}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
             await database.insert(stratusMetrics).values({
-                source_id: metricSourceId,
+                source_id: uniqueMetricId,
                 event_type: metric.event_type,
                 origin_lat: metric.origin_lat,
                 origin_long: metric.origin_long,
@@ -203,7 +237,11 @@ export async function syncProductMetrics(product: StratusProduct, database = db)
         }
 
         const externalMetrics = await fetchProductMetrics(product.url);
-        await storeProductMetrics(product.id, product.source_id, externalMetrics, database);
+
+        // Only store metrics if we actually got some
+        if (externalMetrics.length > 0) {
+            await storeProductMetrics(product.id, product.source_id, externalMetrics, database);
+        }
 
         return {
             success: true,
