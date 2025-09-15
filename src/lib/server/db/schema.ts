@@ -24,7 +24,7 @@ export const stratusProducts = pgTable('stratus_products', {
 
 export const stratusMetrics = pgTable('stratus_metrics', {
 	id: uuid().primaryKey().defaultRandom(),
-	source_id: text().notNull().unique(),
+	source_id: text().notNull(),
 	event_type: stratusMetricEnum().notNull(),
 	origin_lat: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
 	origin_long: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),

@@ -1,5 +1,4 @@
 import { db, totalEventCount, stratusMetrics, stratusProducts } from '$lib/server';
-import { eq } from 'drizzle-orm';
 import type { StratusProduct } from '$lib/types';
 
 // ============================================================================
