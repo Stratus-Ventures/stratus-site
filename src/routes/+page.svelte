@@ -103,15 +103,7 @@
                 <!-- 3D GLOBE -->
 
                 <!-- METRICS BLOCK -->
-                <MetricsBlock metrics={[
-                    { name: "Users", value: 123 },
-                    { name: "Downloads", value: 666 },
-                    { name: "Subscriptions", value: 777 },
-                    { name: "Metric", value: 999 },
-                    { name: "Metric2", value: 1000 },
-                    { name: "Another Metric2", value: 1000 },
-                    { name: "Another Metric2", value: 1000 },
-                ]}/>
+                <MetricsBlock metrics={data.metrics} />
             </div>
 
         </section>

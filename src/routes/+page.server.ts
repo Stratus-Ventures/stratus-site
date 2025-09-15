@@ -1,5 +1,6 @@
-import { db, totalEventCount, getFormattedProducts, processAuthFromUrl, logger, stratusProducts } from '$lib/server';
-import { eq } from 'drizzle-orm';
+import { getFormattedProducts, processAuthFromUrl, logger, db } from '$lib/server';
+import { getMetrics } from '$lib/server/services/metrics';
+import { createProduct, updateProduct, deleteProduct, validateProductData } from '$lib/server/services/products';
 import type { PageServerLoad, Actions } from './$types';
 import type { Product } from '$lib/types';
 import { fail } from '@sveltejs/kit';
@@ -8,37 +9,26 @@ import { fail } from '@sveltejs/kit';
 //  L O A D   F U N C T I O N  ------------------------------------------------------- //
 
 export const load: PageServerLoad = async ({ url }) => {
-    
-    // 1. Fetch formatted products from database
-    // 2. Process authentication from URL parameters
-    // 3. Return data with error handling
-
-    // ------------------------------------------------------------------- //
-
     try {
-
-        // [ STEP 1. ] - Fetch formatted products from database
+        // ================================================================
+        // PRODUCTS DATA
+        // ================================================================
         const products: Product[] = await getFormattedProducts(db);
 
-        // [ STEP 1.5. ] - Fetch metrics from database
-        const rawMetrics = await db.select().from(totalEventCount).limit(1);
-        const metricsData = rawMetrics[0] || {
-            user_created_total: 0,
-            download_started_total: 0,
-            subscription_activated_total: 0
-        };
+        // ================================================================
+        // METRICS DATA
+        // ================================================================
+        const metrics = await getMetrics();
 
-        // Transform metrics into the format expected by MetricsBlock
-        const metrics = [
-            { name: "Users", value: Number(metricsData.user_created_total) || 0 },
-            { name: "Downloads", value: Number(metricsData.download_started_total) || 0 },
-            { name: "Subscriptions", value: Number(metricsData.subscription_activated_total) || 0 }
-        ];
-
-        // [ STEP 2. ] - Process authentication from URL parameters
+        // ================================================================
+        // AUTHENTICATION
+        // ================================================================
         const authResult = processAuthFromUrl(url);
 
-        // [ STEP 2.5. ] - Debug: Log first product to verify ID field
+        // ================================================================
+        // DEBUG LOGGING
+        // ================================================================
+        // Log first product structure for debugging
         if (products.length > 0) {
             console.log('📦 First product structure:', {
                 id: products[0].id,
@@ -47,13 +37,15 @@ export const load: PageServerLoad = async ({ url }) => {
             });
         }
 
-        // [ STEP 3. ] - Log current auth code for testing
+        // Log current auth code for testing
         const { getCurrentValidCode } = await import('$lib/server/services/auth');
         const currentCode = getCurrentValidCode();
         console.log(`🔐 [Page Reload] Current auth code: ${currentCode}`);
         console.log(`🔗 Test URL: ${url.origin}/?auth=${currentCode}`);
 
-        // [ STEP 4. ] - Return data with error handling
+        // ================================================================
+        // RETURN DATA
+        // ================================================================
         return {
             products,
             metrics,
@@ -61,18 +53,13 @@ export const load: PageServerLoad = async ({ url }) => {
             auth: authResult
         };
 
-
     } catch (error) {
-        logger.error('Failed to load products', error);
-        
+        logger.error('Failed to load page data', error);
+
         return {
             products: [],
-            metrics: [
-                { name: "Users", value: 0 },
-                { name: "Downloads", value: 0 },
-                { name: "Subscriptions", value: 0 }
-            ],
-            error: 'An Error Occured'
+            metrics: [],
+            error: 'An Error Occurred'
         };
     }
 };
@@ -80,24 +67,19 @@ export const load: PageServerLoad = async ({ url }) => {
 //  A C T I O N S  --------------------------------------------------------------- //
 
 export const actions: Actions = {
+    // ====================================================================
+    // CREATE PRODUCT
+    // ====================================================================
     async createProduct({ request }) {
         const formData = await request.formData();
-        const name = formData.get('name') as string;
-        const tagline = formData.get('tagline') as string;
-        const url = formData.get('url') as string;
+        const validation = validateProductData(formData);
 
-        if (!name || !tagline) {
-            return fail(400, { error: 'Product name and tagline are required' });
+        if (!validation.isValid) {
+            return fail(400, { error: validation.error });
         }
 
         try {
-            const result = await db.insert(stratusProducts).values({
-                source_id: `product_${Date.now()}`,
-                name,
-                tagline,
-                url
-            }).returning();
-            
+            await createProduct(validation.data!);
             return { success: true };
         } catch (error) {
             logger.error('Failed to create product', error);
@@ -105,22 +87,23 @@ export const actions: Actions = {
         }
     },
 
+    // ====================================================================
+    // UPDATE PRODUCT
+    // ====================================================================
     async updateProduct({ request }) {
         const formData = await request.formData();
-        const id = formData.get('id') as string;
-        const name = formData.get('name') as string;
-        const tagline = formData.get('tagline') as string;
-        const url = formData.get('url') as string;
+        const validation = validateProductData(formData);
 
-        if (!id || !name || !tagline) {
-            return fail(400, { error: 'Product name and tagline are required' });
+        if (!validation.isValid) {
+            return fail(400, { error: validation.error });
+        }
+
+        if (!('id' in validation.data!)) {
+            return fail(400, { error: 'Product ID is required for updates' });
         }
 
         try {
-            await db.update(stratusProducts)
-                .set({ name, tagline, url })
-                .where(eq(stratusProducts.id, id));
-                
+            await updateProduct(validation.data as any);
             return { success: true };
         } catch (error) {
             logger.error('Failed to update product', error);
@@ -128,6 +111,9 @@ export const actions: Actions = {
         }
     },
 
+    // ====================================================================
+    // DELETE PRODUCT
+    // ====================================================================
     async deleteProduct({ request }) {
         const formData = await request.formData();
         const id = formData.get('id') as string;
@@ -137,7 +123,7 @@ export const actions: Actions = {
         }
 
         try {
-            await db.delete(stratusProducts).where(eq(stratusProducts.id, id));
+            await deleteProduct(id);
             return { success: true };
         } catch (error) {
             logger.error('Failed to delete product', error);
