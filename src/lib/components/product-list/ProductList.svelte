@@ -7,8 +7,7 @@
         addProduct,
         saveProduct,
         deleteProduct,
-        handleCancelEdit, 
-        getShimmerWidth
+        handleCancelEdit
     } from '$lib';
     import type { Product, ProductState } from '$lib';
     import ProductItem from './ProductItem.svelte';
@@ -22,11 +21,11 @@
 
     let { products = [], error = null, isAuthenticated = false }: Props = $props();
 
-    //   H A N D L E R   F U N C T I O N S  ------------------------------ //
+    //   S T A T E   M A N A G E M E N T  ------------------------------ //
     
     // 1. Get auth state from store
     // 2. Determine if edit mode is available
-    // 3. Handle authentication logging
+    // 3. Create product state and derived values
 
     // ------------------------------------------------------------------- //
 
@@ -36,9 +35,7 @@
     // [ STEP 2. ] - Determine if edit mode is available
     let canEdit = $derived(isAuthenticated || authState.isAuthenticated);
     
-
-    //   S T A T E   M A N A G E M E N T  ------------------------------ //
-
+    // [ STEP 3. ] - Create product state and derived values
     let productState: ProductState = $state({
         editingProductId: null,
         isAddingProduct: false,
@@ -49,7 +46,7 @@
         }
     });
 
-    // Tray state
+    // Derived tray state
     let isTrayOpen = $derived(productState.editingProductId !== null || productState.isAddingProduct);
     let editingProduct = $derived(
         productState.editingProductId 
@@ -57,17 +54,13 @@
             : null
     );
 
-    //   U T I L I T Y   F U N C T I O N S  ------------------------------ //
-
-    let shimmerWidth = $derived.by(() => getShimmerWidth());
+    //   H A N D L E R   F U N C T I O N S  ------------------------------ //
 
     // Handle tray save (either edit or add)
     async function handleTraySave(product: Product | null, state: ProductState) {
         if (product) {
-            // Editing existing product
             await saveProduct(product, state);
         } else {
-            // Adding new product
             await addProduct(state);
         }
     }

@@ -10,7 +10,7 @@
         onEdit: (product: Product, state: ProductState) => void;
     }
 
-    let { product, canEdit, state = $bindable(), onEdit }: Props = $props();
+    let { product, canEdit, state: productState = $bindable(), onEdit }: Props = $props();
 
     //   H A N D L E R   F U N C T I O N S  ------------------------------ //
     
@@ -20,7 +20,7 @@
 
     // [ STEP 1. ] - Start editing this product (opens tray)
     function startEdit() {
-        onEdit(product, state);
+        onEdit(product, productState);
     }
 
 </script>
@@ -39,7 +39,9 @@
                 <h3 class="title text-primary-fg text-start w-full sm:max-w-md">{product.name}</h3>
                 <p class="paragraph text-secondary-fg text-start w-full">{product.tagline}</p>
             </div>
+
             <Button onClick={startEdit} label="Edit" variant="outlined" />
+
         </div>
 
 <!-- STATE :: DEFAULT VIEW -->

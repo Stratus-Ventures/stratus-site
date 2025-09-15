@@ -61,7 +61,7 @@
                     gap-3
                 ">
                     <Logo 
-                        size={64}
+                        size={60}
                     />
                     <h1 class="h1 text-primary-fg select-none">Stratus</h1>
                 </div>
@@ -150,3 +150,4 @@
 	}
 
 </style>
+

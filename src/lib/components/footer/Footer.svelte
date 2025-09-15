@@ -12,7 +12,7 @@
 ">
 
     <span class=" 
-        small text-secondary-fg 
+        paragraph text-secondary-fg 
         align-middle select-none
         mr-3
     ">© 2025 Stratus Ventures LLC</span>

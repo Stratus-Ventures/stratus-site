@@ -17,7 +17,7 @@ export { default as Downloads } from './components/icons/Downloads.svelte';
 export { default as Subscription } from './components/icons/Subscription.svelte';
 export { default as Users } from './components/icons/Users.svelte';
 export { default as Logo } from './components/icons/Logo.svelte';
-export {default as CloseDrawer } from './components/icons/CloseDrawer.svelte';
+export { default as CloseDrawer } from './components/icons/CloseDrawer.svelte';
 
 
 //  S T O R E S  ----------------------------------------------------------------- //

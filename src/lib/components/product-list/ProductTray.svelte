@@ -1,7 +1,7 @@
 <script lang="ts">
+    import { slide, fade } from 'svelte/transition';
     import type { Product, ProductState } from '$lib';
-    import { Button, IconButton } from '$lib';
-	import CloseDrawer from '../icons/CloseDrawer.svelte';
+    import { Button, IconButton, CloseDrawer } from '$lib';
 
     interface Props {
         isOpen: boolean;
@@ -19,7 +19,7 @@
     // 1. Handle save button click
     // 2. Handle delete button click  
     // 3. Handle cancel button click
-    // 4. Handle backdrop click
+    // 4. Determine if this is editing or adding
 
     // ------------------------------------------------------------------- //
 
@@ -42,41 +42,42 @@
 
     // [ STEP 4. ] - Determine if this is editing or adding
     let isEditing = $derived(!!product);
+
 </script>
 
-<!-- Backdrop -->
 {#if isOpen}
+
+    <!-- BACKDROP -->
     <div 
-        class="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+        class="fixed inset-0 bg-black/50 z-10"
+        transition:fade={{ duration: 200 }}
         role="button"
         tabindex="0"
         onclick={handleCancel}
-        onkeydown={(e) => e.key === 'Escape' && handleCancel()}
+        onkeydown={(e) => {
+            if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                handleCancel();
+            }
+        }}
     ></div>
-{/if}
 
-<!-- Sliding Tray -->
-<div class="
-    fixed bottom-0 left-0 right-0 z-50
-    transform transition-transform duration-300 ease-out
-    {isOpen ? 'translate-y-0' : 'translate-y-full'}
-">
+    <!-- SLIDING TRAY -->
     <div 
-        class="
-            w-full max-w-2xl mx-auto
-            bg-primary-bg border-x-1 border-t-1 border-border
-            rounded-t-2xl
-            px-5 sm:px-8 pt-5 sm:pt-8 pb-24" 
-        role="dialog" 
-        aria-modal="true"
-        tabindex="-1"
-        onclick={(e) => e.stopPropagation()}
-        onkeydown={() => {}}
+        class="fixed bottom-0 left-0 right-0 z-20"
+        transition:slide={{ duration: 300 }}
     >
-        <!-- Header -->
-        <div class="flex flex-col gap-6 w-full h-fit">
+        <div 
+            class="w-full max-w-4xl mx-auto bg-primary-bg border-t-1 border-border rounded-t-2xl px-5 sm:px-8 pt-5 sm:pt-8 pb-24" 
+            role="dialog" 
+            aria-modal="true"
+            tabindex="-1"
+            onclick={(e) => e.stopPropagation()}
+            onkeydown={(e) => e.stopPropagation()}
+        >
+        <!-- HEADER -->
+        <div class="flex flex-col gap-5 w-full h-fit">
             <div class="flex items-center justify-between">
-                <h2 class="font-sans font-medium text-lg text-primary-fg tracking-tight leading-tight">
+                <h2 class="h2 text-primary-fg">
                     {isEditing ? 'Edit Product' : 'Add New Product'}
                 </h2>
                 <IconButton
@@ -87,50 +88,50 @@
                 />
             </div>
 
-            <!-- Form Fields -->
-            <div class="flex flex-col justify-between gap-8">
-                <!-- Fields -->
+            <!-- FORM CONTAINER -->
+            <div class="flex flex-col justify-start gap-8">
+                <!-- FIELDS -->
                 <div class="flex flex-col w-full gap-3">
                     <input 
                         bind:value={state.formData.name}
                         placeholder="Product name"
                         class="w-full px-4 py-3 border border-border rounded-lg 
-                               bg-secondary-bg text-primary-fg
-                               hover:bg-transparent
-                               focus:border-secondary-fg focus:outline-none
-                               transition-colors"
+                            bg-secondary-bg text-primary-fg
+                            hover:bg-transparent
+                            focus:border-secondary-fg focus:outline-none
+                            transition-colors"
                     />
                     
                     <input 
                         bind:value={state.formData.tagline}
                         placeholder="Product tagline"
                         class="w-full px-4 py-3 border border-border rounded-lg 
-                               bg-secondary-bg text-primary-fg
-                               hover:bg-transparent
-                               focus:border-secondary-fg focus:outline-none
-                               transition-colors"
+                            bg-secondary-bg text-primary-fg
+                            hover:bg-transparent
+                            focus:border-secondary-fg focus:outline-none
+                            transition-colors"
                     />
 
                     <input 
                         bind:value={state.formData.url}
                         placeholder="https://example.com"
                         class="w-full px-4 py-3 border border-border rounded-lg 
-                               bg-secondary-bg text-primary-fg
-                               hover:bg-transparent
-                               focus:border-secondary-fg focus:outline-none
-                               transition-colors"
+                            bg-secondary-bg text-primary-fg
+                            hover:bg-transparent
+                            focus:border-secondary-fg focus:outline-none
+                            transition-colors"
                     />
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-3 sm:items-start">
+                <!-- ACTIONS BUTTON -->
+                <div class="flex flex-row gap-3 sm:items-start">
                     <Button onClick={handleSave} label="Save" variant="filled" />
                     {#if isEditing && onDelete}
                         <Button onClick={handleDelete} label="Delete" variant="outlined" />
                     {/if}
-                    <Button onClick={handleCancel} label="Cancel" variant="outlined" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+{/if}
