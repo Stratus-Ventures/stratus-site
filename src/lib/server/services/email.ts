@@ -38,7 +38,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
         await resend.emails.send({
             from: 'Auth System <auth@stratus-ventures.org>',
             to: ['jason@stratus-ventures.org'],
-            subject: '🔐 New Auth Code Generated',
+            subject: 'New Auth Code Generated',
             html: `
                 <!DOCTYPE html>
                 <html>
@@ -53,7 +53,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                     color: #0a0a0a;
                     margin: 0;
                     padding: 0;
-                    line-height: 1.6;
+                    line-height: 1.2;
                 ">
                     <div style="
                         max-width: 600px;
@@ -74,7 +74,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                                 margin: 0 0 24px 0;
                                 color: #0a0a0a;
                                 letter-spacing: -0.025em;
-                            ">🔐 New Authentication Code</h1>
+                            ">New Authentication Code</h1>
 
                             <div style="
                                 background: #ffffff;
