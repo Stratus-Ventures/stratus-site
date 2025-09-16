@@ -291,18 +291,30 @@ export async function syncAllProductMetrics(database = db): Promise<{
         // Get all products
         const products = await database.select().from(stratusProducts);
 
-        // Sync all products in parallel, ensuring proper typing for 'product'
-        const syncPromises = products.map(async (product: StratusProduct) => {
-            const result = await syncProductMetrics(product, database);
-            return {
-                productName: product.name,
-                success: result.success,
-                metricsCount: result.metricsCount,
-                error: result.error
-            };
-        });
+        // Rate-limited parallel sync (max 3 concurrent requests)
+        const CONCURRENCY_LIMIT = 3;
+        const results: any[] = [];
 
-        const results = await Promise.allSettled(syncPromises);
+        for (let i = 0; i < products.length; i += CONCURRENCY_LIMIT) {
+            const batch = products.slice(i, i + CONCURRENCY_LIMIT);
+            const batchPromises = batch.map(async (product: StratusProduct) => {
+                const result = await syncProductMetrics(product, database);
+                return {
+                    productName: product.name,
+                    success: result.success,
+                    metricsCount: result.metricsCount,
+                    error: result.error
+                };
+            });
+
+            const batchResults = await Promise.allSettled(batchPromises);
+            results.push(...batchResults);
+
+            // Add delay between batches to be nice to external APIs
+            if (i + CONCURRENCY_LIMIT < products.length) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
         let successfulSyncs = 0;
         let failedSyncs = 0;
 
