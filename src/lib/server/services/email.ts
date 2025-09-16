@@ -68,7 +68,7 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
                             text-align: center;
                         ">
                             <h1 style="
-                                font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                                 font-weight: 500;
                                 font-size: 24px;
                                 margin: 0 0 24px 0;
