@@ -23,14 +23,13 @@ export const stratusProducts = pgTable('stratus_products', {
 .enableRLS();
 
 export const stratusMetrics = pgTable('stratus_metrics', {
-	id: uuid().primaryKey().defaultRandom(),
-	source_id: text().notNull(),
+	id: text().primaryKey(),
 	event_type: stratusMetricEnum().notNull(),
 	origin_lat: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
 	origin_long: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
 	city_code: varchar({ length: 3 }).notNull(),
 	country_code: varchar({ length: 3 }).notNull(),
-	product_id: uuid('product_id').notNull().references(() => stratusProducts.id),
+	product_name: text().notNull().references(() => stratusProducts.source_id),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 })
 .enableRLS();

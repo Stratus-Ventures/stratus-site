@@ -211,19 +211,19 @@ export async function storeProductMetrics(
     try {
         // Clear existing metrics for this product to avoid duplicates
         await database.delete(stratusMetrics)
-            .where(eq(stratusMetrics.product_id, productId));
+            .where(eq(stratusMetrics.product_name, sourceId));
 
         let storedCount = 0;
         for (const metric of externalMetrics) {
             // Use the product's source_id directly (each metric has its own UUID for uniqueness)
             await database.insert(stratusMetrics).values({
-                source_id: sourceId,
+                id: metric.id,
                 event_type: metric.event_type,
                 origin_lat: metric.origin_lat,
                 origin_long: metric.origin_long,
                 city_code: metric.city_code,
                 country_code: metric.country_code,
-                product_id: productId
+                product_name: sourceId
             });
             storedCount++;
         }

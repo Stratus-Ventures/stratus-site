@@ -1,5 +1,8 @@
 //  A U T H   S E R V I C E  --------------------------------------------------------- //
 
+import { sendAuthCodeEmail } from './email';
+import { logger } from './logger';
+
 let currentValidCode: string | null = null;
 
 //  C O D E   G E N E R A T I O N  --------------------------------------------------- //
@@ -52,27 +55,37 @@ export function extractAuthCodeFromUrl(url: URL): string | null {
 
 //  C O D E   R O T A T I O N  ------------------------------------------------------- //
 
-export function rotateAuthCode(): string {
+export async function rotateAuthCode(baseUrl?: string): Promise<string> {
 
     // 1. Generate new authentication code
     // 2. Set as current valid code
-    // 3. Log new code for debugging
+    // 3. Send email with code and URL if baseUrl provided
 
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Generate new authentication code
     const newCode = generateAuthCode();
-    
+
     // [ STEP 2. ] - Set as current valid code
     currentValidCode = newCode;
-    
-    // [ STEP 3. ] - Log new code for debugging
-    console.log(`🔐 New auth code generated: ${newCode}`);
+
+    // [ STEP 3. ] - Send email with code and URL if baseUrl provided
+    if (baseUrl) {
+        const testUrl = `${baseUrl}/?auth=${newCode}`;
+        try {
+            await sendAuthCodeEmail(newCode, testUrl);
+        } catch (error) {
+            logger.error('Failed to send auth code email', error);
+        }
+    } else {
+        logger.info('New auth code generated', { code: newCode });
+    }
+
     return newCode;
 }
 
-export function consumeAndRotateCode(): string {
-    
+export async function consumeAndRotateCode(baseUrl?: string): Promise<string> {
+
     // 1. Log current code consumption
     // 2. Invalidate current code
     // 3. Generate and return new code
@@ -80,13 +93,13 @@ export function consumeAndRotateCode(): string {
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Log current code consumption
-    console.log(`🔓 Auth code consumed: ${currentValidCode}`);
-    
+    logger.info('Auth code consumed', { code: currentValidCode });
+
     // [ STEP 2. ] - Invalidate current code
     currentValidCode = null;
-    
+
     // [ STEP 3. ] - Generate and return new code
-    return rotateAuthCode();
+    return await rotateAuthCode(baseUrl);
 }
 
 //  S T A T E   M A N A G E M E N T  ------------------------------------------------- //
@@ -101,7 +114,7 @@ export function getCurrentValidCode(): string | null {
     return currentValidCode;
 }
 
-export function initializeAuth(): string {
+export async function initializeAuth(baseUrl?: string): Promise<string> {
 
     // 1. Check if valid code exists
     // 2. Generate new code if needed
@@ -112,9 +125,9 @@ export function initializeAuth(): string {
     // [ STEP 1. ] - Check if valid code exists
     if (!currentValidCode) {
         // [ STEP 2. ] - Generate new code if needed
-        return rotateAuthCode();
+        return await rotateAuthCode(baseUrl);
     }
-    
+
     // [ STEP 3. ] - Return current or new code
     return currentValidCode;
 }
@@ -157,11 +170,11 @@ export function redirectToHome(): void {
 
 //  A U T H   F L O W   H E L P E R  ------------------------------------------------- //
 
-export function processAuthFromUrl(url: URL): { 
-    isAuthenticated: boolean; 
+export async function processAuthFromUrl(url: URL): Promise<{
+    isAuthenticated: boolean;
     newCode?: string;
     error?: string;
-} {
+}> {
 
     // 1. Extract auth code from URL
     // 2. Validate extracted code
@@ -172,27 +185,28 @@ export function processAuthFromUrl(url: URL): {
 
     // [ STEP 1. ] - Extract auth code from URL
     const codeFromUrl = extractAuthCodeFromUrl(url);
-    
+
     if (!codeFromUrl) {
         return { isAuthenticated: false, error: 'No auth code provided' };
     }
-    
+
     // [ STEP 2. ] - Validate extracted code
     if (validateAuthCode(codeFromUrl)) {
 
         // [ STEP 3. ] - Handle successful authentication
-        const newCode = consumeAndRotateCode();
-        return { 
-            isAuthenticated: true, 
+        const newCode = await consumeAndRotateCode(url.origin);
+        return {
+            isAuthenticated: true,
             newCode,
         };
     }
-    
+
     // [ STEP 4. ] - Return authentication result
-    return { 
-        isAuthenticated: false, 
+    return {
+        isAuthenticated: false,
         error: 'Invalid auth code'
     };
 }
 
-initializeAuth();
+// Initialize auth on module load
+initializeAuth().catch(console.error);

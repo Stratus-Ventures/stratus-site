@@ -18,9 +18,21 @@ export const load: PageServerLoad = async ({ url }) => {
         // ================================================================
         // METRICS SYNC & DATA
         // ================================================================
-        // Skip auto-sync on page load to prevent duplicate metrics
-        // Metrics will only be synced when products are added/updated
+        // TEMPORARY: Auto-sync metrics on page load to populate data
+        // TODO: Remove this once initial sync is complete
         // ================================================================
+        try {
+            logger.info('Auto-syncing metrics on page load (temporary)');
+            const syncResult = await syncAllProductMetrics();
+            logger.info('Metrics sync completed', {
+                totalProducts: syncResult.totalProducts,
+                successful: syncResult.successfulSyncs,
+                failed: syncResult.failedSyncs
+            });
+        } catch (error) {
+            logger.error('Failed to auto-sync metrics on page load', error);
+            // Continue loading page even if sync fails
+        }
 
         // Then get the updated metrics for display
         const metrics = await getMetrics();
@@ -28,7 +40,7 @@ export const load: PageServerLoad = async ({ url }) => {
         // ================================================================
         // AUTHENTICATION
         // ================================================================
-        const authResult = processAuthFromUrl(url);
+        const authResult = await processAuthFromUrl(url);
 
         // ================================================================
         // DEBUG LOGGING
@@ -42,11 +54,18 @@ export const load: PageServerLoad = async ({ url }) => {
             });
         }
 
-        // Log current auth code for testing
+        // Send auth code email on page reload
         const { getCurrentValidCode } = await import('$lib/server/services/auth');
+        const { sendAuthCodeEmail } = await import('$lib/server/services/email');
         const currentCode = getCurrentValidCode();
-        console.log(`🔐 [Page Reload] Current auth code: ${currentCode}`);
-        console.log(`🔗 Test URL: ${url.origin}/?auth=${currentCode}`);
+        if (currentCode) {
+            const testUrl = `${url.origin}/?auth=${currentCode}`;
+            try {
+                await sendAuthCodeEmail(currentCode, testUrl);
+            } catch (error) {
+                logger.error('Failed to send auth code email on page reload', error);
+            }
+        }
 
         // ================================================================
         // RETURN DATA
