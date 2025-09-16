@@ -15,7 +15,7 @@ if (env.RESEND_API_KEY) {
 
 //  A U T H   C O D E   E M A I L  --------------------------------------------------- //
 
-export async function sendAuthCodeEmail(authCode: string, testUrl: string): Promise<void> {
+export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Promise<void> {
 
     // 1. Validate required parameters
     // 2. Send email with auth code and URL
@@ -24,11 +24,11 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Validate required parameters
-    if (!authCode || !testUrl) {
+    if (!authCode || !adminUrl) {
         throw new Error('Auth code and test URL are required');
     }
 
-    if (!process.env.RESEND_API_KEY || !resend) {
+    if (!env.RESEND_API_KEY || !resend) {
         logger.warn('RESEND_API_KEY not configured, skipping email send');
         return;
     }
@@ -36,9 +36,9 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
     try {
         // [ STEP 2. ] - Send email with auth code and URL
         await resend.emails.send({
-            from: 'Auth System <auth@stratus-ventures.org>',
+            from: 'Stratus - Auth System <auth@stratus-ventures.org>',
             to: ['jason@stratus-ventures.org'],
-            subject: '🔐 New Auth Code Generated',
+            subject: 'New Auth Code Generated',
             html: `
                 <!DOCTYPE html>
                 <html>
@@ -48,7 +48,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                     <title>Auth Code</title>
                 </head>
                 <body style="
-                    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                     background-color: #ffffff;
                     color: #0a0a0a;
                     margin: 0;
@@ -68,7 +68,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                             text-align: center;
                         ">
                             <h1 style="
-                                font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+                                font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
                                 font-weight: 500;
                                 font-size: 24px;
                                 margin: 0 0 24px 0;
@@ -83,18 +83,10 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                                 padding: 24px;
                                 margin: 24px 0;
                             ">
-                                <p style="
-                                    font-weight: 500;
-                                    font-size: 16px;
-                                    margin: 0 0 12px 0;
-                                    color: #0a0a0a;
-                                ">Auth Code:</p>
                                 <code style="
-                                    background: #f4f4f4;
-                                    border: 1px solid #e5e5e5;
                                     padding: 12px 16px;
                                     border-radius: 6px;
-                                    font-family: 'JetBrains Mono', monospace;
+                                    font-family: 'Geist Mono', monospace;
                                     font-size: 20px;
                                     font-weight: 600;
                                     letter-spacing: 0.1em;
@@ -103,44 +95,17 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                                 ">${authCode}</code>
                             </div>
 
-                            <div style="
-                                background: #ffffff;
-                                border: 1px solid #e5e5e5;
-                                border-radius: 8px;
-                                padding: 24px;
-                                margin: 24px 0;
-                            ">
-                                <p style="
-                                    font-weight: 500;
-                                    font-size: 16px;
-                                    margin: 0 0 12px 0;
-                                    color: #0a0a0a;
-                                ">Test URL:</p>
-                                <a href="${testUrl}" style="
-                                    display: inline-block;
-                                    background: #0a0a0a;
-                                    color: #ffffff;
-                                    text-decoration: none;
-                                    padding: 12px 24px;
-                                    border-radius: 6px;
-                                    font-weight: 500;
-                                    font-size: 16px;
-                                    transition: background-color 0.2s ease;
-                                ">Access Site</a>
-                                <p style="
-                                    font-size: 14px;
-                                    color: #737373;
-                                    margin: 12px 0 0 0;
-                                    word-break: break-all;
-                                ">${testUrl}</p>
-                            </div>
-
-                            <p style="
-                                font-size: 14px;
-                                color: #737373;
-                                margin: 24px 0 0 0;
-                                font-style: italic;
-                            ">This code was automatically generated by the Stratus auth system.</p>
+                            <a href="${adminUrl}" style="
+                                display: inline-block;
+                                background: #0a0a0a;
+                                color: #ffffff;
+                                text-decoration: none;
+                                padding: 12px 24px;
+                                border-radius: 6px;
+                                font-weight: 500;
+                                font-size: 16px;
+                                transition: background-color 0.2s ease;
+                            ">Access Site</a>
                         </div>
                     </div>
                 </body>
