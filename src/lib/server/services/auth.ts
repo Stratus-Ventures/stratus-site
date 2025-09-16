@@ -117,19 +117,47 @@ export function getCurrentValidCode(): string | null {
 export async function initializeAuth(baseUrl?: string): Promise<string> {
 
     // 1. Check if valid code exists
-    // 2. Generate new code if needed
+    // 2. Generate new code only if none exists (no email sending)
     // 3. Return current or new code
 
     // ------------------------------------------------------------------- //
 
     // [ STEP 1. ] - Check if valid code exists
     if (!currentValidCode) {
-        // [ STEP 2. ] - Generate new code if needed
-        return await rotateAuthCode(baseUrl);
+        // [ STEP 2. ] - Generate new code only if none exists (no email sending)
+        const newCode = generateAuthCode();
+        currentValidCode = newCode;
+        logger.info('Auth code initialized without email', { code: newCode });
+        return newCode;
     }
 
     // [ STEP 3. ] - Return current or new code
     return currentValidCode;
+}
+
+export async function requestAuthCode(baseUrl: string): Promise<string> {
+
+    // 1. Initialize auth if no code exists
+    // 2. Send email with current code
+    // 3. Return code
+
+    // ------------------------------------------------------------------- //
+
+    // [ STEP 1. ] - Initialize auth if no code exists
+    const code = await initializeAuth();
+
+    // [ STEP 2. ] - Send email with current code
+    const testUrl = `${baseUrl}/?auth=${code}`;
+    try {
+        await sendAuthCodeEmail(code, testUrl);
+        logger.info('Auth code email sent on request', { code });
+    } catch (error) {
+        logger.error('Failed to send requested auth code email', error);
+        throw error;
+    }
+
+    // [ STEP 3. ] - Return code
+    return code;
 }
 
 //  U R L   H E L P E R S  ----------------------------------------------------------- //
@@ -208,5 +236,4 @@ export async function processAuthFromUrl(url: URL): Promise<{
     };
 }
 
-// Initialize auth on module load
-initializeAuth().catch(console.error);
+// Don't auto-initialize - only generate codes when needed

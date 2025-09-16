@@ -54,18 +54,8 @@ export const load: PageServerLoad = async ({ url }) => {
             });
         }
 
-        // Send auth code email on page reload
-        const { getCurrentValidCode } = await import('$lib/server/services/auth');
-        const { sendAuthCodeEmail } = await import('$lib/server/services/email');
-        const currentCode = getCurrentValidCode();
-        if (currentCode) {
-            const testUrl = `${url.origin}/?auth=${currentCode}`;
-            try {
-                await sendAuthCodeEmail(currentCode, testUrl);
-            } catch (error) {
-                logger.error('Failed to send auth code email on page reload', error);
-            }
-        }
+        // Only send auth code email if user is not already authenticated
+        // This prevents spam emails on every page reload
 
         // ================================================================
         // RETURN DATA

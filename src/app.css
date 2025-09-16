@@ -23,7 +23,7 @@
     src: url("/fonts/SpaceGrotesk-Medium.woff2") format("woff2");
     font-weight: 500;
     font-style: normal;
-    font-display: swap;
+    font-display: optional;
 }
 
 
