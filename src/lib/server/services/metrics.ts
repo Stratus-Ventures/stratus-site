@@ -213,20 +213,22 @@ export async function storeProductMetrics(
         await database.delete(stratusMetrics)
             .where(eq(stratusMetrics.product_name, sourceId));
 
-        let storedCount = 0;
-        for (const metric of externalMetrics) {
-            // Use the product's source_id directly (each metric has its own UUID for uniqueness)
-            await database.insert(stratusMetrics).values({
-                id: metric.id,
-                event_type: metric.event_type,
-                origin_lat: metric.origin_lat,
-                origin_long: metric.origin_long,
-                city_code: metric.city_code,
-                country_code: metric.country_code,
-                product_name: sourceId
-            });
-            storedCount++;
+        // Batch insert all metrics at once
+        const metricsToInsert = externalMetrics.map(metric => ({
+            id: metric.id,
+            event_type: metric.event_type,
+            origin_lat: metric.origin_lat,
+            origin_long: metric.origin_long,
+            city_code: metric.city_code,
+            country_code: metric.country_code,
+            product_name: sourceId
+        }));
+
+        if (metricsToInsert.length > 0) {
+            await database.insert(stratusMetrics).values(metricsToInsert);
         }
+
+        const storedCount = metricsToInsert.length;
 
         logger.info(`Successfully stored ${storedCount} metrics for product ${sourceId} (replaced existing)`);
     } catch (error) {
@@ -289,32 +291,44 @@ export async function syncAllProductMetrics(database = db): Promise<{
         // Get all products
         const products = await database.select().from(stratusProducts);
 
-        const results = [];
-        let successfulSyncs = 0;
-        let failedSyncs = 0;
-
-        for (const product of products) {
+        // Sync all products in parallel, ensuring proper typing for 'product'
+        const syncPromises = products.map(async (product: StratusProduct) => {
             const result = await syncProductMetrics(product, database);
-
-            results.push({
+            return {
                 productName: product.name,
                 success: result.success,
                 metricsCount: result.metricsCount,
                 error: result.error
-            });
+            };
+        });
 
-            if (result.success) {
-                successfulSyncs++;
+        const results = await Promise.allSettled(syncPromises);
+        let successfulSyncs = 0;
+        let failedSyncs = 0;
+
+        const finalResults = results.map((result) => {
+            if (result.status === 'fulfilled') {
+                if (result.value.success) {
+                    successfulSyncs++;
+                } else {
+                    failedSyncs++;
+                }
+                return result.value;
             } else {
                 failedSyncs++;
+                return {
+                    productName: 'Unknown',
+                    success: false,
+                    error: result.reason?.message || 'Unknown error'
+                };
             }
-        }
+        });
 
         return {
             totalProducts: products.length,
             successfulSyncs,
             failedSyncs,
-            results
+            results: finalResults
         };
     } catch (error) {
         console.error('Error syncing all product metrics:', error);
