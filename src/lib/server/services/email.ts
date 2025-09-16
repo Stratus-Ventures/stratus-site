@@ -2,12 +2,15 @@
 
 import { Resend } from 'resend';
 import { logger } from './logger';
+import { env } from '$env/dynamic/private';
 
 let resend: Resend | null = null;
 
 // Initialize Resend only if API key is available
-if (process.env.RESEND_API_KEY) {
-    resend = new Resend(process.env.RESEND_API_KEY);
+console.log('RESEND_API_KEY:', env.RESEND_API_KEY ? 'SET' : 'NOT SET');
+if (env.RESEND_API_KEY) {
+    resend = new Resend(env.RESEND_API_KEY);
+    console.log('Resend initialized successfully');
 }
 
 //  A U T H   C O D E   E M A I L  --------------------------------------------------- //
@@ -25,7 +28,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
         throw new Error('Auth code and test URL are required');
     }
 
-    if (!process.env.RESEND_API_KEY || !resend) {
+    if (!env.RESEND_API_KEY || !resend) {
         logger.warn('RESEND_API_KEY not configured, skipping email send');
         return;
     }
