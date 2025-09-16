@@ -28,7 +28,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
         throw new Error('Auth code and test URL are required');
     }
 
-    if (!env.RESEND_API_KEY || !resend) {
+    if (!process.env.RESEND_API_KEY || !resend) {
         logger.warn('RESEND_API_KEY not configured, skipping email send');
         return;
     }
@@ -38,7 +38,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
         await resend.emails.send({
             from: 'Auth System <auth@stratus-ventures.org>',
             to: ['jason@stratus-ventures.org'],
-            subject: 'New Auth Code Generated',
+            subject: '🔐 New Auth Code Generated',
             html: `
                 <!DOCTYPE html>
                 <html>
@@ -74,7 +74,7 @@ export async function sendAuthCodeEmail(authCode: string, testUrl: string): Prom
                                 margin: 0 0 24px 0;
                                 color: #0a0a0a;
                                 letter-spacing: -0.025em;
-                            ">New Authentication Code</h1>
+                            ">🔐 New Authentication Code</h1>
 
                             <div style="
                                 background: #ffffff;
