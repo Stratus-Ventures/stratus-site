@@ -86,7 +86,7 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
                                 <code style="
                                     padding: 12px 16px;
                                     border-radius: 6px;
-                                    font-family: 'Geist Mono', monospace;
+                                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', Consolas, 'Courier New', monospace;
                                     font-size: 20px;
                                     font-weight: 600;
                                     letter-spacing: 0.1em;
