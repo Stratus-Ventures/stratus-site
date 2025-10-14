@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { Users, Downloads, Subscriptions } from '$lib';
+    import { Users, Downloads, Subscriptions, APIIcon } from '$lib';
 
 	interface Props {
 		iconType: string;
@@ -16,6 +16,7 @@
 		users: Users,
 		downloads: Downloads,
 		subscriptions: Subscriptions,
+		api_calls: APIIcon,
 	};
 
 	let IconComponent = $derived(iconMap[iconType.toLowerCase() as keyof typeof iconMap] || Users);
