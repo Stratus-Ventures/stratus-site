@@ -377,6 +377,9 @@ export const activeEvents = writable<AnimatedEvent[]>([]);
 // Indices of events that have been shown (to cycle through all before repeating)
 const usedEventIndices = writable<Set<number>>(new Set());
 
+// Recent event locations to prevent clustering (stores last 3 event coordinates)
+const recentEventLocations = writable<Array<{lat: number, lng: number, timestamp: number}>>([]);
+
 // Animation counter for unique IDs
 let animationCounter = 0;
 
@@ -430,13 +433,24 @@ function shuffleArray<T>(array: T[]): T[] {
 // ============================================================================
 
 /**
- * Gets a random event from the available pool
+ * Calculates the distance between two geographic points in degrees
+ */
+function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+	const deltaLat = lat1 - lat2;
+	const deltaLng = lng1 - lng2;
+	return Math.sqrt(deltaLat * deltaLat + deltaLng * deltaLng);
+}
+
+/**
+ * Gets a random event from the available pool with geographic diversity
  * Ensures all events are shown before repeating any
+ * Prevents clustering by avoiding locations too close to recent events
  * Optimized with early returns for performance
  */
 function getRandomEvent(
 	events: GlobeEvent[],
-	used: Set<number>
+	used: Set<number>,
+	recentLocations: Array<{lat: number, lng: number, timestamp: number}> = []
 ): { event: GlobeEvent; index: number } | null {
 	// Early return for empty events
 	if (events.length === 0) return null;
@@ -451,8 +465,20 @@ function getRandomEvent(
 
 	if (availableIndices.length === 0) return null;
 
-	// Pick random unused event
-	const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+	// Filter out events too close to recent locations (within ~15 degrees)
+	const MIN_DISTANCE = 15; // Minimum distance in degrees to prevent clustering
+	const diverseIndices = availableIndices.filter(index => {
+		const event = events[index];
+		return recentLocations.every(recent => 
+			calculateDistance(event.origin_lat, event.origin_long, recent.lat, recent.lng) >= MIN_DISTANCE
+		);
+	});
+
+	// Use diverse indices if available, otherwise fall back to all available
+	const candidateIndices = diverseIndices.length > 0 ? diverseIndices : availableIndices;
+
+	// Pick random event from candidates
+	const randomIndex = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
 
 	return { event: events[randomIndex], index: randomIndex };
 }
@@ -519,6 +545,7 @@ function canAddEvent(currentEvents: AnimatedEvent[], newEventType: StratusMetric
 /**
  * Starts animating a single event
  * Automatically removes it after ANIMATION_DURATION (9 seconds for ping-pong)
+ * Tracks recent locations to prevent clustering
  */
 async function animateEvent(
 	event: GlobeEvent,
@@ -529,6 +556,19 @@ async function animateEvent(
 
 	// Add to active events
 	activeEvents.update((current) => [...current, animatedEvent]);
+
+	// Track this location to prevent clustering
+	recentEventLocations.update((locations) => {
+		const newLocation = {
+			lat: event.origin_lat,
+			lng: event.origin_long,
+			timestamp: Date.now()
+		};
+		
+		// Keep only the last 3 locations (within 3 event iterations)
+		const updatedLocations = [...locations, newLocation].slice(-3);
+		return updatedLocations;
+	});
 
 	// Wait for animation duration (9 seconds: rise 2s + hold 5s + fall 2s)
 	await new Promise((resolve) => setTimeout(resolve, ANIMATION_DURATION));
@@ -558,6 +598,7 @@ export async function startAnimationCycle(): Promise<void> {
 	let events: GlobeEvent[] = [];
 	let used: Set<number> = new Set();
 	let current: AnimatedEvent[] = [];
+	let recentLocations: Array<{lat: number, lng: number, timestamp: number}> = [];
 
 	// Subscribe to stores
 	allEvents.subscribe((value) => {
@@ -569,16 +610,19 @@ export async function startAnimationCycle(): Promise<void> {
 	activeEvents.subscribe((value) => {
 		current = value;
 	});
+	recentEventLocations.subscribe((value) => {
+		recentLocations = value;
+	});
 
 	// Wait for events to load
 	while (events.length === 0) {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 	}
 
-	// Start with 2-3 initial events
+	// Start with 2-3 initial events with geographic diversity
 	const initialEventCount = MIN_INITIAL_EVENTS + Math.floor(Math.random() * 2); // 2 or 3
 	for (let i = 0; i < initialEventCount && i < events.length; i++) {
-		const randomEvent = getRandomEvent(events, used);
+		const randomEvent = getRandomEvent(events, used, recentLocations);
 		if (randomEvent && canAddEvent(current, randomEvent.event.event_type)) {
 			animateEvent(randomEvent.event, used, randomEvent.index);
 			// Small delay between initial events
@@ -586,10 +630,10 @@ export async function startAnimationCycle(): Promise<void> {
 		}
 	}
 
-	// Main animation loop
+	// Main animation loop with geographic diversity
 	while (true) {
-		// Get a random unused event
-		const randomEvent = getRandomEvent(events, used);
+		// Get a random unused event with geographic diversity
+		const randomEvent = getRandomEvent(events, used, recentLocations);
 
 		if (randomEvent) {
 			// Check if we can add this event type

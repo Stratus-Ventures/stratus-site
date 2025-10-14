@@ -42,8 +42,8 @@
 		enableZoom={false}
 		enablePan={false}
 		enableDamping
-		dampingFactor={0.1}
-		rotateSpeed={0.2}
+		dampingFactor={0.08}
+		rotateSpeed={0.28}
 		minPolarAngle={Math.PI * 0.25}
 		maxPolarAngle={Math.PI * 0.5}
 	/>

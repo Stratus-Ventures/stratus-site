@@ -35,7 +35,7 @@
 	<!-- MAIN -->
 	<main
 		class="
-        mt-16 flex h-fit w-full max-w-6xl
+        mt-8 flex h-fit w-full max-w-6xl
         flex-col items-center
         justify-start gap-16
      "
@@ -99,7 +99,7 @@
 				class="
                 order-1 flex
                 h-fit w-full flex-col items-center
-                justify-center sm:order-2
+                justify-center sm:order-2 gap-0
             "
 			>
 				<!-- 3D GLOBE -->
