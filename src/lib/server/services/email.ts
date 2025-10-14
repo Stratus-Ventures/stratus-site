@@ -67,14 +67,6 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
                             padding: 32px;
                             text-align: center;
                         ">
-                            <h1 style="
-                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                                font-weight: 500;
-                                font-size: 24px;
-                                margin: 0 0 24px 0;
-                                color: #0a0a0a;
-                                letter-spacing: -0.025em;
-                            ">🔐 New Authentication Code</h1>
 
                             <div style="
                                 background: #ffffff;

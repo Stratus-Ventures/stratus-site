@@ -5,9 +5,10 @@ import { sql } from 'drizzle-orm';
 //  C U S T O M   T Y P E S  --------------------------------------------------------- //
 
 export const stratusMetricEnum = pgEnum('stratus_metric_type', [
-	'user_created', 
-	'download_started', 
-	'subscription_activated'
+	'user_created',
+	'download_started',
+	'subscription_activated',
+	'api_calls'
 ]);
 
 
@@ -15,8 +16,7 @@ export const stratusMetricEnum = pgEnum('stratus_metric_type', [
 
 export const stratusProducts = pgTable('stratus_products', {
 	id: uuid().primaryKey().defaultRandom(),
-	source_id: text().notNull().unique(),
-	name: text().notNull(),
+	name: text().notNull().unique(),
 	tagline: text().notNull(),
 	url: text().notNull()
 })
@@ -29,7 +29,8 @@ export const stratusMetrics = pgTable('stratus_metrics', {
 	origin_long: numeric({ precision: 7, scale: 4 }).$type<number>().notNull(),
 	city_code: varchar({ length: 3 }).notNull(),
 	country_code: varchar({ length: 3 }).notNull(),
-	product_name: text().notNull().references(() => stratusProducts.source_id),
+	product_name: text().notNull().references(() => stratusProducts.name),
+	source_id: text().notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 })
 .enableRLS();
@@ -66,15 +67,18 @@ export const totalEventCount = pgView('totalEventCount')
 })
 .as((qb) => qb
 	.select({
-		user_created_total: 
+		user_created_total:
 			sql`count(*) filter (where ${stratusMetrics.event_type} = 'user_created')`
 			.as('user_created_total'),
-		download_started_total: 
+		download_started_total:
 			sql`count(*) filter (where ${stratusMetrics.event_type} = 'download_started')`
 			.as('download_started_total'),
-		subscription_activated_total: 
+		subscription_activated_total:
 			sql`count(*) filter (where ${stratusMetrics.event_type} = 'subscription_activated')`
-			.as('subscription_activated_total')
+			.as('subscription_activated_total'),
+		api_calls_total:
+			sql`count(*) filter (where ${stratusMetrics.event_type} = 'api_calls')`
+			.as('api_calls_total')
 	})
 	.from(stratusMetrics)
 );	

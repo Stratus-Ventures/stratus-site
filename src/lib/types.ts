@@ -4,18 +4,18 @@
 
 export interface StratusProduct {
     id: string;              // UUID from database (required for UI operations)
-    source_id: string;       // Source identifier (required)
     name: string;            // Product name
-    tagline: string;         // Product tagline  
+    tagline: string;         // Product tagline
     url: string;             // Product URL
 }
 
 export type Product = StratusProduct;
 
-export type StratusMetricType = 
-    | 'user_created' 
-    | 'download_started' 
+export type StratusMetricType =
+    | 'user_created'
+    | 'download_started'
     | 'subscription_activated'
+    | 'api_calls'
 ;
 
 export interface StratusMetric {

@@ -7,7 +7,6 @@ import type { StratusProduct } from '$lib/types';
 // ============================================================================
 
 export const METRICS_CONFIG = {
-    // Define which metrics to track and their display names
     users: {
         displayName: 'Users',
         dbField: 'user_created_total' as const,
@@ -22,13 +21,12 @@ export const METRICS_CONFIG = {
         displayName: 'Subscriptions',
         dbField: 'subscription_activated_total' as const,
         enabled: true
+    },
+    api_calls: {
+        displayName: 'API Calls',
+        dbField: 'api_calls_total' as const,
+        enabled: true
     }
-    // Add new metrics here:
-    // revenue: {
-    //     displayName: 'Revenue',
-    //     dbField: 'revenue_total' as const,
-    //     enabled: false
-    // }
 } as const;
 
 // ============================================================================
@@ -42,7 +40,7 @@ export interface MetricItem {
 
 export interface ExternalMetric {
     id?: string;
-    event_type: 'user_created' | 'download_started' | 'subscription_activated';
+    event_type: 'user_created' | 'download_started' | 'subscription_activated' | 'api_calls';
     origin_lat: number;
     origin_long: number;
     city_code: string;
@@ -96,7 +94,8 @@ function createEmptyMetricsData(): Record<MetricDbFields, number> {
     return {
         user_created_total: 0,
         download_started_total: 0,
-        subscription_activated_total: 0
+        subscription_activated_total: 0,
+        api_calls_total: 0
     };
 }
 
@@ -203,25 +202,27 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
  * Stores external metrics in the local database, avoiding duplicates
  */
 export async function storeProductMetrics(
-    productId: string,
-    sourceId: string,
+    productName: string,
     externalMetrics: ExternalMetric[],
     database = db
 ): Promise<void> {
     try {
         // Clear existing metrics for this product to avoid duplicates
         await database.delete(stratusMetrics)
-            .where(eq(stratusMetrics.product_name, sourceId));
+            .where(eq(stratusMetrics.product_name, productName));
 
-        // Batch insert all metrics at once
-        const metricsToInsert = externalMetrics.map(metric => ({
+        // Generate source_id for each metric based on product name
+        // Format: productname-0, productname-1, etc.
+        const productNameSlug = productName.toLowerCase().replace(/\s+/g, '-');
+        const metricsToInsert = externalMetrics.map((metric, index) => ({
             id: metric.id,
             event_type: metric.event_type,
             origin_lat: metric.origin_lat,
             origin_long: metric.origin_long,
             city_code: metric.city_code,
             country_code: metric.country_code,
-            product_name: sourceId
+            product_name: productName,
+            source_id: `${productNameSlug}-${index}`
         }));
 
         if (metricsToInsert.length > 0) {
@@ -230,9 +231,9 @@ export async function storeProductMetrics(
 
         const storedCount = metricsToInsert.length;
 
-        logger.info(`Successfully stored ${storedCount} metrics for product ${sourceId} (replaced existing)`);
+        logger.info(`Successfully stored ${storedCount} metrics for product ${productName} (replaced existing)`);
     } catch (error) {
-        logger.error(`Error storing metrics for product ${sourceId}:`, error);
+        logger.error(`Error storing metrics for product ${productName}:`, error);
         throw error;
     }
 }
@@ -257,7 +258,7 @@ export async function syncProductMetrics(product: StratusProduct, database = db)
 
         // Only store metrics if we actually got some
         if (externalMetrics.length > 0) {
-            await storeProductMetrics(product.id, product.source_id, externalMetrics, database);
+            await storeProductMetrics(product.name, externalMetrics, database);
         }
 
         return {

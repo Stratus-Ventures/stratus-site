@@ -71,7 +71,7 @@
 	--color-button-fg: rgb(10 10 10);               /* neutral-950 */
 	--color-button-fg-50: rgb(10 10 10 / 50%);      /* neutral-950 at 50% opacity */
     --color-button-fg-inv: rgb(255 255 255);        /* white */
-	--color-button-bg: rgb(255 255 255);            /* neutral-50 */
+	--color-button-bg: rgb(255 255 255);            /* white */
 	--color-button-bg-hover: rgb(245 245 245);      /* neutral-200 */
 
     /* Extras */
