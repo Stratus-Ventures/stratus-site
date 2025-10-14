@@ -29,7 +29,7 @@
 	class="
     theme-transition flex h-fit w-full min-w-xs flex-col
     items-center justify-start
-    p-5 antialiased sm:h-screen sm:p-8
+    px-5 pb-5 pt-0 antialiased sm:h-screen sm:px-8 sm:pb-8 sm:pt-8
 	"
 >
 	<!-- MAIN -->
@@ -44,7 +44,7 @@
 		<section
 			class="
             flex h-fit w-full flex-col items-center
-            justify-start gap-5 md:flex-row sm:gap-8
+            justify-start gap-5 sm:flex-row sm:gap-8
         "
 		>
 			<!-- CONTENT CONTAINER -->
