@@ -3,7 +3,7 @@
 	import Scene from './Scene.svelte';
 </script>
 
-<div class="h-[460px] sm:h-[500px] w-full overflow-visible aspect-square">
+<div class="w-full max-w-full sm:max-w-[500px] aspect-square overflow-visible">
 	<Canvas>
 		<Scene />
 	</Canvas>

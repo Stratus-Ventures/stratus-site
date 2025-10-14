@@ -25,7 +25,7 @@
 
 	// [ STEP 1. ] - Compute button classes based on variant
 	let classes = $derived(`
-        flex w-full sm:w-fit h-fit items-center justify-center relative
+        flex w-full lg:w-fit h-fit items-center justify-center relative
         rounded-lg button-label px-6 py-3 select-none cursor-pointer theme-transition
         ${
 			variant === 'outlined'
@@ -72,6 +72,10 @@
 {/if}
 
 <style>
+	.button-label {
+		white-space: nowrap;
+	}
+
 	.shimmer-text {
 		position: relative;
 		color: rgb(var(--color-button-fg));

@@ -29,7 +29,7 @@
 	class="
     theme-transition flex h-fit w-full min-w-xs flex-col
     items-center justify-start
-    px-5 pb-5 pt-0 antialiased sm:h-screen sm:px-8 sm:pb-8 sm:pt-8
+    px-5 pb-5 pt-5 antialiased sm:h-screen sm:px-16 sm:pb-16 lg:pt-16
 	"
 >
 	<!-- MAIN -->
@@ -37,14 +37,14 @@
 		class="
         flex h-fit w-full max-w-6xl
         flex-col items-center
-        justify-start gap-16 sm:mt-8
+        justify-start gap-16 sm:mt-16 overflow-clip
      "
 	>
 		<!-- HERO SECTION -->
-		<section
+		<section	
 			class="
-            flex h-fit w-full flex-col items-center
-            justify-start gap-5 sm:flex-row sm:gap-8
+            flex h-fit w-full flex-col items-center justify-center
+            lg:justify-between lg:flex-row gap-5 lg:gap-5
         "
 		>
 			<!-- CONTENT CONTAINER -->
@@ -53,7 +53,7 @@
                 order-2 flex
                 h-fit w-full flex-col items-start
                 justify-center gap-5
-                sm:order-1
+                lg:order-1
             "
 			>
 				<!-- LOGO & H1 -->
@@ -69,7 +69,7 @@
 				</div>
 
 				<!-- PARAGRAPH -->
-				<p class="paragraph line-clamp-4 w-fit text-secondary-fg select-none">
+				<p class="paragraph line-clamp-4 w-full max-w-120 min-w-80 sm:w-fit text-secondary-fg select-none">
 					Stratus Ventures LLC owns a group of AI-forward ventures founded by
 					<a href="https://x.com/jasoncoawette" class="title link-text text-primary-fg"
 						>Jason Coawette</a
@@ -81,8 +81,8 @@
 				<div
 					class="
                     mt-5 flex h-fit w-full flex-row
-                    items-center justify-center
-                    gap-3 sm:w-fit
+                    items-center justify-center lg:justify-start
+                    gap-3
                 "
 				>
 					<Button
@@ -97,10 +97,10 @@
 			<!-- HERO GRAPHIC CONTAINER -->
 			<div
 				class="
-                order-1 flex
-                h-fit w-full flex-col items-center
-                justify-center sm:order-2 gap-0
-            "
+					order-1 flex
+					h-fit w-full flex-col items-center
+					justify-center lg:order-2
+            	"
 			>
 				<!-- 3D GLOBE -->
 				<Globe />

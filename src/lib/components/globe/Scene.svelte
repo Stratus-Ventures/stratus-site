@@ -32,7 +32,7 @@
 <!-- Camera -->
 <T.PerspectiveCamera
 	makeDefault
-	fov={60}
+	fov={50}
 	near={0.1}
 	far={1000}
 	position={[cameraDistance * 0.1, cameraDistance * 0.2, cameraDistance]}
