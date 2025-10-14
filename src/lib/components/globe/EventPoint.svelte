@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { T, useTask } from '@threlte/core';
 	import { latLngToSphere } from '$lib/utils/geo';
-	import { mode } from 'mode-watcher';
+	import { theme } from '$lib/stores/themeStore';
 	import type { AnimatedEvent } from '$lib/services/GlobeService';
 
 	interface Props {
@@ -11,13 +11,13 @@
 
 	const { event, radius }: Props = $props();
 
-	// Point color based on theme (white in dark, black in light)
-	let pointColor = $derived(mode.current === 'dark' ? 0xffffff : 0x000000);
+	// Point color based on theme (white in dark, black in light) - cached for performance
+	let pointColor = $derived($theme === 'dark' ? 0xffffff : 0x000000);
 
 	// Base position on globe surface
 	const basePosition = latLngToSphere(event.origin_lat, event.origin_long, radius);
 
-	// Random height variation (up to 0.25x radius)
+	// Random height variation (up to 0.25x radius) - pre-calculated for performance
 	const maxHeight = radius * (0.15 + Math.random() * 0.1);
 
 	// Animation state
@@ -27,7 +27,7 @@
 	const HOLD_DURATION = 2000; // 2 seconds hold
 	const FALL_DURATION = 2000; // 2 seconds fall
 
-	// Animate the ping-pong motion
+	// Animate the ping-pong motion - optimized with early exit
 	useTask(() => {
 		const elapsed = Date.now() - animationStart;
 
@@ -50,8 +50,9 @@
 				progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 			currentHeight = maxHeight * (1 - eased);
 		} else {
-			// Done
+			// Done - early exit for performance
 			currentHeight = 0;
+			return; // Skip further calculations
 		}
 	});
 

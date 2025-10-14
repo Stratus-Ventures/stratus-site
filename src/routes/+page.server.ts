@@ -46,17 +46,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		// ================================================================
 		const authResult = await processAuthFromUrl(url);
 
-		// ================================================================
-		// DEBUG LOGGING
-		// ================================================================
-		// Log first product structure for debugging
-		if (products.length > 0) {
-			console.log('📦 First product structure:', {
-				id: products[0].id,
-				name: products[0].name,
-				hasId: !!products[0].id
-			});
-		}
+		// Products loaded successfully
 
 		// Only send auth code email if user is not already authenticated
 		// This prevents spam emails on every page reload

@@ -26,12 +26,12 @@
 	// [ STEP 1. ] - Compute button classes based on variant
 	let classes = $derived(`
         flex w-full sm:w-fit h-fit items-center justify-center relative
-        rounded-lg button-label px-6 py-3 select-none cursor-pointer
+        rounded-lg button-label px-6 py-3 select-none cursor-pointer theme-transition
         ${
-					variant === 'outlined'
-						? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
-						: 'bg-button-bg border-1 border-button-bg text-button-fg'
-				}
+			variant === 'outlined'
+				? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
+				: 'bg-button-bg border-1 border-button-bg text-button-fg'
+		}
     `);
 
 	// [ STEP 2. ] - Handle shimmer animation with CSS-only approach

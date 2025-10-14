@@ -28,40 +28,40 @@ export const logger: Logger = {
 	//  G E N E R A L  ------------------------------------------- //
 
 	info: (message, data) => {
-		console.info(`ℹ️  ${message}`, data);
+		console.info(`[INFO] ${message}`, data || '');
 	},
 
 	warn: (message, data) => {
-		console.warn(`⚠️  ${message}`, data);
+		console.warn(`[WARN] ${message}`, data || '');
 	},
 
 	error: (message, error) => {
-		console.error(`❌ ${message}`, error);
+		console.error(`[ERROR] ${message}`, error || '');
 	},
 
 	debug: (message, data) => {
-		console.debug(`🔍 ${message}`, data);
+		console.debug(`[DEBUG] ${message}`, data || '');
 	},
 
 	//  A P I   H E L P E R S  ----------------------------------- //
 
 	api: (endpoint, origin) => {
-		console.info(`🌐 ${endpoint} from ${origin || 'unknown'}`);
+		console.info(`[INFO] API ${endpoint} from ${origin || 'unknown'}`);
 	},
 
 	success: (message) => {
-		console.info(`✅ ${message}`);
+		console.info(`[INFO] ${message}`);
 	},
 
 	blocked: (endpoint, reason) => {
-		console.warn(`🚫 ${endpoint} blocked: ${reason}`);
+		console.warn(`[WARN] API ${endpoint} blocked: ${reason}`);
 	},
 
 	db: (operation, result) => {
-		console.info(`💾 ${operation}${result ? `: ${result}` : ''}`);
+		console.info(`[INFO] DB ${operation}${result ? `: ${result}` : ''}`);
 	},
 
 	sync: (message, data) => {
-		console.info(`🔄 ${message}`, data);
+		console.info(`[INFO] SYNC ${message}`, data || '');
 	}
 };

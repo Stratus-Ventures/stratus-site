@@ -7,10 +7,8 @@ import { env } from '$env/dynamic/private';
 let resend: Resend | null = null;
 
 // Initialize Resend only if API key is available
-console.log('RESEND_API_KEY:', env.RESEND_API_KEY ? 'SET' : 'NOT SET');
 if (env.RESEND_API_KEY) {
 	resend = new Resend(env.RESEND_API_KEY);
-	console.log('Resend initialized successfully');
 }
 
 //  A U T H   C O D E   E M A I L  --------------------------------------------------- //

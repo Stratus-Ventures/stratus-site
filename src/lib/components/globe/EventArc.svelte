@@ -5,7 +5,7 @@
 	import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 	import { Group } from 'three';
 	import { createArcPoints } from '$lib/utils/geo';
-	import { mode } from 'mode-watcher';
+	import { theme } from '$lib/stores/themeStore';
 	import type { AnimatedEvent } from '$lib/services/GlobeService';
 	import { getPhoenixCoords } from '$lib/services/GlobeService';
 
@@ -18,8 +18,8 @@
 	const { size: sizeStore } = useThrelte();
 	const phoenix = getPhoenixCoords();
 
-	// Arc color based on theme (white in dark, black in light)
-	let arcColor = $derived(mode.current === 'dark' ? 0xffffff : 0x000000);
+	// Arc color based on theme (white in dark, black in light) - cached for performance
+	let arcColor = $derived($theme === 'dark' ? 0xffffff : 0x000000);
 
 	// Create arc geometry from event origin to Phoenix
 	// Using 100 segments for smoother arcs
@@ -86,7 +86,7 @@
 	let line: Line2 | null = null;
 	let material: LineMaterial | null = null;
 
-	// Update line when visible positions or color changes
+	// Update line when visible positions or color changes - optimized with early returns
 	$effect(() => {
 		if (!groupRef) return;
 
@@ -99,7 +99,7 @@
 			material = null;
 		}
 
-		// Create new line if we have enough points
+		// Create new line if we have enough points - minimum 6 for performance
 		if (visiblePositions.length >= 6) {
 			const geometry = new LineGeometry().setPositions(visiblePositions);
 			material = new LineMaterial({

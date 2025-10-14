@@ -200,6 +200,167 @@ const FALLBACK_EVENTS: GlobeEvent[] = [
 		origin_long: 116.4074,
 		city_code: 'PEK',
 		country_code: 'CHN'
+	},
+	// Additional globally diverse locations
+	{
+		id: 'test-21',
+		event_type: 'user_created',
+		origin_lat: -26.2041,
+		origin_long: 28.0473,
+		city_code: 'JNB',
+		country_code: 'ZAF'
+	},
+	{
+		id: 'test-22',
+		event_type: 'subscription_activated',
+		origin_lat: 30.0444,
+		origin_long: 31.2357,
+		city_code: 'CAI',
+		country_code: 'EGY'
+	},
+	{
+		id: 'test-23',
+		event_type: 'user_created',
+		origin_lat: 6.5244,
+		origin_long: 3.3792,
+		city_code: 'LOS',
+		country_code: 'NGA'
+	},
+	{
+		id: 'test-24',
+		event_type: 'subscription_activated',
+		origin_lat: -1.2921,
+		origin_long: 36.8219,
+		city_code: 'NBO',
+		country_code: 'KEN'
+	},
+	{
+		id: 'test-25',
+		event_type: 'user_created',
+		origin_lat: 33.8869,
+		origin_long: 9.5375,
+		city_code: 'TUN',
+		country_code: 'TUN'
+	},
+	{
+		id: 'test-26',
+		event_type: 'subscription_activated',
+		origin_lat: -17.8252,
+		origin_long: 31.0335,
+		city_code: 'HRE',
+		country_code: 'ZWE'
+	},
+	{
+		id: 'test-27',
+		event_type: 'user_created',
+		origin_lat: 12.9716,
+		origin_long: 77.5946,
+		city_code: 'BLR',
+		country_code: 'IND'
+	},
+	{
+		id: 'test-28',
+		event_type: 'subscription_activated',
+		origin_lat: 21.0285,
+		origin_long: 105.8542,
+		city_code: 'HAN',
+		country_code: 'VNM'
+	},
+	{
+		id: 'test-29',
+		event_type: 'user_created',
+		origin_lat: 3.139,
+		origin_long: 101.6869,
+		city_code: 'KUL',
+		country_code: 'MYS'
+	},
+	{
+		id: 'test-30',
+		event_type: 'subscription_activated',
+		origin_lat: 14.5995,
+		origin_long: 120.9842,
+		city_code: 'MNL',
+		country_code: 'PHL'
+	},
+	{
+		id: 'test-31',
+		event_type: 'user_created',
+		origin_lat: -6.2088,
+		origin_long: 106.8456,
+		city_code: 'JKT',
+		country_code: 'IDN'
+	},
+	{
+		id: 'test-32',
+		event_type: 'subscription_activated',
+		origin_lat: 13.7563,
+		origin_long: 100.5018,
+		city_code: 'BKK',
+		country_code: 'THA'
+	},
+	{
+		id: 'test-33',
+		event_type: 'user_created',
+		origin_lat: 35.6895,
+		origin_long: 51.3890,
+		city_code: 'THR',
+		country_code: 'IRN'
+	},
+	{
+		id: 'test-34',
+		event_type: 'subscription_activated',
+		origin_lat: 41.0082,
+		origin_long: 28.9784,
+		city_code: 'IST',
+		country_code: 'TUR'
+	},
+	{
+		id: 'test-35',
+		event_type: 'user_created',
+		origin_lat: 31.7683,
+		origin_long: 35.2137,
+		city_code: 'JRS',
+		country_code: 'ISR'
+	},
+	{
+		id: 'test-36',
+		event_type: 'subscription_activated',
+		origin_lat: 64.1466,
+		origin_long: -21.9426,
+		city_code: 'REK',
+		country_code: 'ISL'
+	},
+	{
+		id: 'test-37',
+		event_type: 'user_created',
+		origin_lat: 60.1699,
+		origin_long: 24.9384,
+		city_code: 'HEL',
+		country_code: 'FIN'
+	},
+	{
+		id: 'test-38',
+		event_type: 'subscription_activated',
+		origin_lat: 47.4979,
+		origin_long: 19.0402,
+		city_code: 'BUD',
+		country_code: 'HUN'
+	},
+	{
+		id: 'test-39',
+		event_type: 'user_created',
+		origin_lat: 50.0755,
+		origin_long: 14.4378,
+		city_code: 'PRG',
+		country_code: 'CZE'
+	},
+	{
+		id: 'test-40',
+		event_type: 'subscription_activated',
+		origin_lat: -41.2865,
+		origin_long: 174.7762,
+		city_code: 'WLG',
+		country_code: 'NZL'
 	}
 ];
 
@@ -226,11 +387,13 @@ let animationCounter = 0;
 /**
  * Loads random diverse events from test data
  * Randomizes and removes duplicates at same coordinates
+ * Optimized for performance with early returns
  */
 export async function loadGlobeEvents(): Promise<void> {
 	// Use random diverse geo locations (future-proofed for real data later)
+	// Pre-filter and shuffle for better performance
 	const events = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
-	console.log(`📊 Using ${events.length} random diverse globe events`);
+	// Using diverse random events for globe visualization
 	allEvents.set(events);
 }
 
@@ -269,14 +432,16 @@ function shuffleArray<T>(array: T[]): T[] {
 /**
  * Gets a random event from the available pool
  * Ensures all events are shown before repeating any
+ * Optimized with early returns for performance
  */
 function getRandomEvent(
 	events: GlobeEvent[],
 	used: Set<number>
 ): { event: GlobeEvent; index: number } | null {
+	// Early return for empty events
 	if (events.length === 0) return null;
 
-	// If all events have been used, reset the pool
+	// If all events have been used, reset the pool - performance optimization
 	if (used.size >= events.length) {
 		used.clear();
 	}

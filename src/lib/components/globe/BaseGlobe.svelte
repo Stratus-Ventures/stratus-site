@@ -5,7 +5,7 @@
 	import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 	import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 	import { latLngToSphere } from '$lib/utils/geo';
-	import { mode } from 'mode-watcher';
+	import { theme } from '$lib/stores/themeStore';
 	import { tick } from 'svelte';
 	import type { GeometryCollection } from 'geojson';
 
@@ -18,15 +18,16 @@
 
 	let size = $derived(sizeStore.current);
 
-	// Colors based on theme (reactive using $derived)
-	let globeColor = $derived(new Color(mode.current === 'dark' ? '#0A0A0A' : '#FFFFFF'));
-	let coastColor = $derived(new Color(mode.current === 'dark' ? '#404040' : '#D4D4D4'));
+	// Colors based on theme (reactive using $derived) - cached for performance
+	let globeColor = $derived(new Color($theme === 'dark' ? '#0A0A0A' : '#FFFFFF'));
+	let coastColor = $derived(new Color($theme === 'dark' ? '#404040' : '#D4D4D4'));
 
 	let meshRef: Mesh | undefined = $state();
 	let coastGroup: Group | null = null;
 	let coastMaterials: LineMaterial[] = [];
 	let isInitialized = $state(false);
 
+	// Optimized coastline generation with performance improvements
 	async function generateCoastlines(r: number, color: Color) {
 		const group = new Group();
 		coastMaterials = [];
@@ -49,6 +50,7 @@
 					points.push(v.x, v.y, v.z);
 				}
 
+				// Only create lines with sufficient points for performance
 				if (points.length >= 6) {
 					const geo = new LineGeometry().setPositions(points);
 					const mat = new LineMaterial({

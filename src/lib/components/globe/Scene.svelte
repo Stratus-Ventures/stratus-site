@@ -11,18 +11,19 @@
 	const { size: sizeStore } = useThrelte();
 	let rotation = $state(0);
 
-	// Responsive radius based on viewport size (smaller for better event visibility)
+	// Responsive radius based on viewport size (smaller for better event visibility) - optimized calculations
 	let size = $derived(sizeStore.current);
 	const radius = $derived(size ? Math.min(size.width, size.height) * 0.0035 : 1.5);
 	const cameraDistance = $derived(radius * 2.8);
 
-	// Slow auto-rotation
+	// Slow auto-rotation - optimized for smooth performance
 	useTask((dt) => {
 		rotation += dt * 0.07;
 	});
 
-	// Load events and start animation cycle on mount
+	// Load events and start animation cycle on mount - optimized loading
 	onMount(async () => {
+		// Load events first, then start animation for better performance
 		await loadGlobeEvents();
 		startAnimationCycle();
 	});

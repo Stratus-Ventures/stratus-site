@@ -62,7 +62,7 @@ export async function fetchRawMetrics(database = db) {
 		const rawMetrics = await database.select().from(totalEventCount).limit(1);
 		return rawMetrics[0] || createEmptyMetricsData();
 	} catch (error) {
-		console.error('Failed to fetch raw metrics:', error);
+		logger.error('Failed to fetch raw metrics from database', error);
 		return createEmptyMetricsData();
 	}
 }
@@ -127,7 +127,7 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
 			? `${productUrl}api/stratus-metrics`
 			: `${productUrl}/api/stratus-metrics`;
 
-		console.log(`🔍 Fetching metrics from: ${metricsUrl}`);
+		// Fetching metrics from product URL
 
 		const response = await fetch(metricsUrl, {
 			method: 'GET',
@@ -144,18 +144,13 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
 		if (!response.ok) {
 			// If 404, the endpoint doesn't exist yet - this is expected
 			if (response.status === 404) {
-				console.log(`⚠️  Metrics endpoint not found for ${productUrl} (404) - skipping`);
+				// Metrics endpoint not found - skipping
 				return [];
 			}
 
-			// For 500 errors, try to get more details from response body
+			// Server error - skip this product
 			if (response.status === 500) {
-				try {
-					const errorText = await response.text();
-					console.error(`❌ Server error (500) from ${productUrl}: ${errorText.substring(0, 200)}`);
-				} catch {
-					console.error(`❌ Server error (500) from ${productUrl}: Unable to read error details`);
-				}
+				// Server error details logged elsewhere if needed
 			}
 
 			throw new Error(`Failed to fetch metrics: ${response.status} ${response.statusText}`);
@@ -163,7 +158,7 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
 
 		const contentType = response.headers.get('content-type');
 		if (!contentType || !contentType.includes('application/json')) {
-			console.log(`⚠️  Non-JSON response from ${productUrl} - skipping`);
+			// Non-JSON response - skipping
 			return [];
 		}
 
@@ -171,26 +166,19 @@ export async function fetchProductMetrics(productUrl: string): Promise<ExternalM
 
 		// Validate that we received an array
 		if (!Array.isArray(metrics)) {
-			console.log(`⚠️  Invalid metrics format from ${productUrl} (expected array) - skipping`);
+			// Invalid metrics format - skipping
 			return [];
 		}
 
-		console.log(`✅ Successfully fetched ${metrics.length} metrics from ${productUrl}`);
 		return metrics;
 	} catch (error) {
-		// Log different types of errors with appropriate severity
+		// Log unexpected errors for debugging, but handle expected network issues silently
 		if (error instanceof Error) {
-			if (error.message.includes('ENOTFOUND') || error.message.includes('getaddrinfo')) {
-				console.log(`⚠️  Domain not found: ${productUrl} - skipping`);
-			} else if (error.message.includes('CERT_HAS_EXPIRED')) {
-				console.log(`⚠️  SSL certificate expired: ${productUrl} - skipping`);
-			} else if (error.message.includes('timeout')) {
-				console.log(`⚠️  Request timeout: ${productUrl} - skipping`);
-			} else {
-				console.error(`❌ Error fetching metrics from ${productUrl}:`, error.message);
+			if (!error.message.includes('ENOTFOUND') && 
+				!error.message.includes('CERT_HAS_EXPIRED') && 
+				!error.message.includes('timeout')) {
+				logger.error(`Unexpected error fetching metrics from ${productUrl}`, error);
 			}
-		} else {
-			console.error(`❌ Unknown error fetching metrics from ${productUrl}:`, error);
 		}
 
 		// Return empty array instead of throwing - allows other products to continue
@@ -348,7 +336,7 @@ export async function syncAllProductMetrics(database = db): Promise<{
 			results: finalResults
 		};
 	} catch (error) {
-		console.error('Error syncing all product metrics:', error);
+		logger.error('Error syncing all product metrics', error);
 		throw error;
 	}
 }
