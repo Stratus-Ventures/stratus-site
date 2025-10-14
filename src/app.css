@@ -51,7 +51,6 @@
 	--color-button-fg-50: rgb(255 255 255 / 50%);   /* white at 50% opacity */
     --color-button-fg-inv: rgb(10 10 10);           /* neutral-950 */
 	--color-button-bg: rgb(10 10 10);               /* neutral-950 */
-	--color-button-bg-hover: rgb(38 38 38);         /* neutral-800 */
 
     /* Extras */
     --color-border: rgb(229 229 229);               /* neutral-200 */
@@ -72,7 +71,6 @@
 	--color-button-fg-50: rgb(10 10 10 / 50%);      /* neutral-950 at 50% opacity */
     --color-button-fg-inv: rgb(255 255 255);        /* white */
 	--color-button-bg: rgb(255 255 255);            /* white */
-	--color-button-bg-hover: rgb(245 245 245);      /* neutral-200 */
 
     /* Extras */
     --color-border: rgb(38 38 38);                  /* neutral-800 */

@@ -11,8 +11,7 @@
 
     let { name, data, index = 0 }: Props = $props();
 
-    // Items at the start of each row on mobile (assuming 4 items per row)
-    let isFirst = $derived(index % 3 === 0);
+    let isFirst = $derived(index % 4 === 0);
     let showTooltip = $state(false);
     let isHovered = $state(false);
 

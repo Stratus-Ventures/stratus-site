@@ -16,7 +16,7 @@
 		users: Users,
 		downloads: Downloads,
 		subscriptions: Subscriptions,
-		api_calls: APIIcon,
+		'api calls': APIIcon,
 	};
 
 	let IconComponent = $derived(iconMap[iconType.toLowerCase() as keyof typeof iconMap] || Users);

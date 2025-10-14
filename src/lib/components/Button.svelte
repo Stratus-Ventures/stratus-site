@@ -23,7 +23,7 @@
         rounded-lg button-label px-6 py-3 select-none cursor-pointer
         ${variant === 'outlined'
             ? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
-            : 'bg-button-bg border-1 hover:bg-button-bg-hover border-button-bg text-button-fg'}
+            : 'bg-button-bg border-1 border-button-bg text-button-fg'}
     `);
 
     // [ STEP 2. ] - Handle shimmer animation with CSS-only approach
@@ -127,10 +127,10 @@
     @media (max-width: 640px) {
         @keyframes shimmer {
             0% {
-                background-position: 120% 0;
+                background-position: 160% 0;
             }
             100% {
-                background-position: -60% 0;
+                background-position: -50% 0;
             }
         }
     }
