@@ -20,8 +20,15 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
 
 	// ------------------------------------------------------------------- //
 
+	logger.info('=== EMAIL SEND ATTEMPT ===');
+	logger.info('Auth Code:', authCode);
+	logger.info('Admin URL:', adminUrl);
+	logger.info('RESEND_API_KEY present:', !!env.RESEND_API_KEY);
+	logger.info('Resend client initialized:', !!resend);
+
 	// [ STEP 1. ] - Validate required parameters
 	if (!authCode || !adminUrl) {
+		logger.error('Missing required parameters for email send');
 		throw new Error('Auth code and test URL are required');
 	}
 
@@ -32,7 +39,8 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
 
 	try {
 		// [ STEP 2. ] - Send email with auth code and URL
-		await resend.emails.send({
+		logger.info('Attempting to send email via Resend...');
+		const result = await resend.emails.send({
 			from: 'Stratus - Auth System <auth@stratus-ventures.org>',
 			to: ['jason@stratus-ventures.org'],
 			subject: 'New Auth Code Generated',
@@ -102,10 +110,15 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
             `
 		});
 
-		logger.success('Auth code email sent successfully');
+		logger.success('✅ Auth code email sent successfully!');
+		logger.info('Resend response:', result);
 	} catch (error) {
 		// [ STEP 3. ] - Handle any errors
-		logger.error('Failed to send auth code email', error);
+		logger.error('❌ Failed to send auth code email', error);
+		if (error instanceof Error) {
+			logger.error('Error message:', error.message);
+			logger.error('Error stack:', error.stack);
+		}
 		throw error;
 	}
 }

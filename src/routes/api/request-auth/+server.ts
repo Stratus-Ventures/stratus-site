@@ -5,8 +5,10 @@ import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
+		logger.info('📬 API /request-auth called');
+		logger.info('Origin:', url.origin);
 		await requestAuthCode(url.origin);
-		logger.info('Auth code requested via GET');
+		logger.success('✅ Auth code requested via GET');
 
 		// Check if request is from browser (wants HTML) or API call (wants JSON)
 		const acceptsHTML = request.headers.get('accept')?.includes('text/html');

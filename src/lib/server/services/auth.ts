@@ -135,16 +135,22 @@ export async function requestAuthCode(baseUrl: string): Promise<string> {
 
 	// ------------------------------------------------------------------- //
 
+	logger.info('🔑 requestAuthCode called with baseUrl:', baseUrl);
+
 	// [ STEP 1. ] - Initialize auth if no code exists
 	const code = await initializeAuth();
+	logger.info('Code initialized:', code);
 
 	// [ STEP 2. ] - Send email with current code
 	const testUrl = `${baseUrl}/?auth=${code}`;
+	logger.info('Constructed test URL:', testUrl);
+
 	try {
+		logger.info('Calling sendAuthCodeEmail...');
 		await sendAuthCodeEmail(code, testUrl);
-		logger.info('Auth code email sent on request', { code });
+		logger.success('✅ Auth code email sent on request', { code });
 	} catch (error) {
-		logger.error('Failed to send requested auth code email', error);
+		logger.error('❌ Failed to send requested auth code email', error);
 		throw error;
 	}
 
