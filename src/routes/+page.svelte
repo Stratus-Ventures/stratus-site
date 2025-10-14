@@ -35,9 +35,9 @@
 	<!-- MAIN -->
 	<main
 		class="
-        mt-24 flex h-fit w-full max-w-6xl
+        mt-16 flex h-fit w-full max-w-6xl
         flex-col items-center
-        justify-start gap-24
+        justify-start gap-16
      "
 	>
 		<!-- HERO SECTION -->
