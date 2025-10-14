@@ -9,37 +9,36 @@ let resend: Resend | null = null;
 // Initialize Resend only if API key is available
 console.log('RESEND_API_KEY:', env.RESEND_API_KEY ? 'SET' : 'NOT SET');
 if (env.RESEND_API_KEY) {
-    resend = new Resend(env.RESEND_API_KEY);
-    console.log('Resend initialized successfully');
+	resend = new Resend(env.RESEND_API_KEY);
+	console.log('Resend initialized successfully');
 }
 
 //  A U T H   C O D E   E M A I L  --------------------------------------------------- //
 
 export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Promise<void> {
+	// 1. Validate required parameters
+	// 2. Send email with auth code and URL
+	// 3. Handle any errors
 
-    // 1. Validate required parameters
-    // 2. Send email with auth code and URL
-    // 3. Handle any errors
+	// ------------------------------------------------------------------- //
 
-    // ------------------------------------------------------------------- //
+	// [ STEP 1. ] - Validate required parameters
+	if (!authCode || !adminUrl) {
+		throw new Error('Auth code and test URL are required');
+	}
 
-    // [ STEP 1. ] - Validate required parameters
-    if (!authCode || !adminUrl) {
-        throw new Error('Auth code and test URL are required');
-    }
+	if (!env.RESEND_API_KEY || !resend) {
+		logger.warn('RESEND_API_KEY not configured, skipping email send');
+		return;
+	}
 
-    if (!env.RESEND_API_KEY || !resend) {
-        logger.warn('RESEND_API_KEY not configured, skipping email send');
-        return;
-    }
-
-    try {
-        // [ STEP 2. ] - Send email with auth code and URL
-        await resend.emails.send({
-            from: 'Stratus - Auth System <auth@stratus-ventures.org>',
-            to: ['jason@stratus-ventures.org'],
-            subject: 'New Auth Code Generated',
-            html: `
+	try {
+		// [ STEP 2. ] - Send email with auth code and URL
+		await resend.emails.send({
+			from: 'Stratus - Auth System <auth@stratus-ventures.org>',
+			to: ['jason@stratus-ventures.org'],
+			subject: 'New Auth Code Generated',
+			html: `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -102,14 +101,13 @@ export async function sendAuthCodeEmail(authCode: string, adminUrl: string): Pro
                     </div>
                 </body>
                 </html>
-            `,
-        });
+            `
+		});
 
-        logger.success('Auth code email sent successfully');
-
-    } catch (error) {
-        // [ STEP 3. ] - Handle any errors
-        logger.error('Failed to send auth code email', error);
-        throw error;
-    }
+		logger.success('Auth code email sent successfully');
+	} catch (error) {
+		// [ STEP 3. ] - Handle any errors
+		logger.error('Failed to send auth code email', error);
+		throw error;
+	}
 }

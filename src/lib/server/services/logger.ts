@@ -1,5 +1,3 @@
-
-
 //  T Y P E S  ----------------------------------------------------------------------- //
 
 type LogData = any;
@@ -9,7 +7,6 @@ type LogResult = string | number | boolean;
 type LogEndpoint = string;
 type LogOrigin = string;
 type LogReason = string;
-
 
 //  I N T E R F A C E  --------------------------------------------------------------- //
 
@@ -25,25 +22,23 @@ interface Logger {
 	sync: (message: LogMessage, data?: LogData) => void;
 }
 
-
 //  I N T E R F A C E  --------------------------------------------------------------- //
 
 export const logger: Logger = {
-
-    //  G E N E R A L  ------------------------------------------- //
+	//  G E N E R A L  ------------------------------------------- //
 
 	info: (message, data) => {
 		console.info(`ℹ️  ${message}`, data);
 	},
-	
+
 	warn: (message, data) => {
 		console.warn(`⚠️  ${message}`, data);
 	},
-	
+
 	error: (message, error) => {
 		console.error(`❌ ${message}`, error);
 	},
-	
+
 	debug: (message, data) => {
 		console.debug(`🔍 ${message}`, data);
 	},

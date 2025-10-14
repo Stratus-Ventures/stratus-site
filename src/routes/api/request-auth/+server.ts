@@ -4,16 +4,17 @@ import { logger } from '$lib/server';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, request }) => {
-    try {
-        await requestAuthCode(url.origin);
-        logger.info('Auth code requested via GET');
+	try {
+		await requestAuthCode(url.origin);
+		logger.info('Auth code requested via GET');
 
-        // Check if request is from browser (wants HTML) or API call (wants JSON)
-        const acceptsHTML = request.headers.get('accept')?.includes('text/html');
+		// Check if request is from browser (wants HTML) or API call (wants JSON)
+		const acceptsHTML = request.headers.get('accept')?.includes('text/html');
 
-        if (acceptsHTML) {
-            // Return HTML with JavaScript alert for browser requests
-            return new Response(`
+		if (acceptsHTML) {
+			// Return HTML with JavaScript alert for browser requests
+			return new Response(
+				`
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -26,23 +27,26 @@ export const GET: RequestHandler = async ({ url, request }) => {
                     </script>
                 </body>
                 </html>
-            `, {
-                headers: { 'content-type': 'text/html' }
-            });
-        } else {
-            // Return JSON for API calls
-            return json({
-                success: true,
-                message: 'Auth code sent to email'
-            });
-        }
-    } catch (error) {
-        logger.error('Failed to request auth code via GET', error);
+            `,
+				{
+					headers: { 'content-type': 'text/html' }
+				}
+			);
+		} else {
+			// Return JSON for API calls
+			return json({
+				success: true,
+				message: 'Auth code sent to email'
+			});
+		}
+	} catch (error) {
+		logger.error('Failed to request auth code via GET', error);
 
-        const acceptsHTML = request.headers.get('accept')?.includes('text/html');
+		const acceptsHTML = request.headers.get('accept')?.includes('text/html');
 
-        if (acceptsHTML) {
-            return new Response(`
+		if (acceptsHTML) {
+			return new Response(
+				`
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -55,18 +59,20 @@ export const GET: RequestHandler = async ({ url, request }) => {
                     </script>
                 </body>
                 </html>
-            `, {
-                headers: { 'content-type': 'text/html' },
-                status: 500
-            });
-        } else {
-            return json(
-                {
-                    success: false,
-                    error: 'Failed to send auth code'
-                },
-                { status: 500 }
-            );
-        }
-    }
+            `,
+				{
+					headers: { 'content-type': 'text/html' },
+					status: 500
+				}
+			);
+		} else {
+			return json(
+				{
+					success: false,
+					error: 'Failed to send auth code'
+				},
+				{ status: 500 }
+			);
+		}
+	}
 };

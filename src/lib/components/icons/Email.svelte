@@ -21,7 +21,6 @@
 		if (isHovered) return;
 		isHovered = true;
 	}
-
 </script>
 
 <div class={className} aria-label="send" role="img" onmouseenter={handleMouseEnter}>

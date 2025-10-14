@@ -1,18 +1,25 @@
 <!doctype html>
-<html lang="en" class="bg-primary-bg theme-transition">
+<html lang="en" class="theme-transition bg-primary-bg">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 		<!-- FONT PRELOADS -->
-		<link rel="preload" href="/fonts/SpaceGrotesk-Medium.woff2" as="font" type="font/woff2" crossorigin>
+		<link
+			rel="preload"
+			href="/fonts/SpaceGrotesk-Medium.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 
 		<!-- THEME STORE -->
 		<script>
 			(() => {
 				const stored = localStorage.getItem('theme');
 				const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
-				const resolved = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+				const resolved =
+					stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
 				document.documentElement.classList.toggle('dark', resolved === 'dark');
 			})();
 		</script>

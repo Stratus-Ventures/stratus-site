@@ -66,9 +66,6 @@
 	});
 </script>
 
-<div
-	class={cn(className)}
-	style="min-width: {getFixedWidth()};"
->
+<div class={cn(className)} style="min-width: {getFixedWidth()};">
 	{formattedValue}
 </div>
