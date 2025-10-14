@@ -36,9 +36,9 @@
 	let startIndex = $state(0);
 	let endIndex = $state(0);
 	const animationStart = event.startTime;
-	const RISE_DURATION = 2000; // 2 seconds animate from origin to Phoenix
-	const HOLD_DURATION = 5000; // 5 seconds hold at Phoenix
-	const FALL_DURATION = 2000; // 2 seconds animate back from Phoenix to origin
+	const RISE_DURATION = 1500; // 1.5 seconds animate from origin to Phoenix
+	const HOLD_DURATION = 3500; // 3.5 seconds hold at Phoenix
+	const FALL_DURATION = 1500; // 1.5 seconds animate back from Phoenix to origin
 
 	// Animate the arc from origin to Phoenix, hold, then back to origin
 	useTask(() => {
@@ -46,19 +46,27 @@
 		const totalPoints = arcPoints.length;
 
 		if (elapsed < RISE_DURATION) {
-			// Phase 1: Animate FROM origin TO Phoenix
+			// Phase 1: Animate FROM origin TO Phoenix with smooth easing
 			const progress = elapsed / RISE_DURATION;
+			// Improved easing: cubic-bezier(0.25, 0.46, 0.45, 0.94) equivalent
+			const eased = progress < 0.5 
+				? 4 * progress * progress * progress 
+				: 1 - Math.pow(-2 * progress + 2, 3) / 2;
 			startIndex = 0; // Always start at origin
-			endIndex = Math.floor(totalPoints * progress); // Grow toward Phoenix
+			endIndex = Math.floor(totalPoints * eased); // Grow toward Phoenix
 		} else if (elapsed < RISE_DURATION + HOLD_DURATION) {
 			// Phase 2: Hold full arc at Phoenix
 			startIndex = 0;
 			endIndex = totalPoints - 1;
 		} else if (elapsed < RISE_DURATION + HOLD_DURATION + FALL_DURATION) {
-			// Phase 3: Animate FROM Phoenix back TO origin
+			// Phase 3: Animate FROM Phoenix back TO origin with smooth easing
 			const fallElapsed = elapsed - (RISE_DURATION + HOLD_DURATION);
 			const progress = fallElapsed / FALL_DURATION;
-			startIndex = Math.floor(totalPoints * progress); // Shrink from origin side
+			// Improved easing for fall
+			const eased = progress < 0.5 
+				? 4 * progress * progress * progress 
+				: 1 - Math.pow(-2 * progress + 2, 3) / 2;
+			startIndex = Math.floor(totalPoints * eased); // Shrink from origin side
 			endIndex = totalPoints - 1; // Keep end at Phoenix
 		} else {
 			// Done
@@ -106,7 +114,7 @@
 				color: arcColor,
 				linewidth: 2,
 				transparent: true,
-				opacity: 0.85,
+				opacity: 0.99,
 				depthWrite: false,
 				depthTest: true,
 				toneMapped: false

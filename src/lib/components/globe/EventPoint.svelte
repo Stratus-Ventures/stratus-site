@@ -23,31 +23,33 @@
 	// Animation state
 	let currentHeight = $state(0);
 	const animationStart = event.startTime;
-	const RISE_DURATION = 2000; // 2 seconds rise
+	const RISE_DURATION = 1500; // 1.5 seconds rise
 	const HOLD_DURATION = 2000; // 2 seconds hold
-	const FALL_DURATION = 2000; // 2 seconds fall
+	const FALL_DURATION = 1500; // 1.5 seconds fall
 
 	// Animate the ping-pong motion - optimized with early exit
 	useTask(() => {
 		const elapsed = Date.now() - animationStart;
 
 		if (elapsed < RISE_DURATION) {
-			// Phase 1: Rise (0 to maxHeight)
+			// Phase 1: Rise (0 to maxHeight) with improved easing
 			const progress = elapsed / RISE_DURATION;
-			// Ease in-out
-			const eased =
-				progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+			// Smoother cubic easing for rise
+			const eased = progress < 0.5 
+				? 4 * progress * progress * progress 
+				: 1 - Math.pow(-2 * progress + 2, 3) / 2;
 			currentHeight = maxHeight * eased;
 		} else if (elapsed < RISE_DURATION + HOLD_DURATION) {
 			// Phase 2: Hold at peak
 			currentHeight = maxHeight;
 		} else if (elapsed < RISE_DURATION + HOLD_DURATION + FALL_DURATION) {
-			// Phase 3: Fall (maxHeight to 0)
+			// Phase 3: Fall (maxHeight to 0) with improved easing
 			const fallElapsed = elapsed - (RISE_DURATION + HOLD_DURATION);
 			const progress = fallElapsed / FALL_DURATION;
-			// Ease in-out
-			const eased =
-				progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+			// Smoother cubic easing for fall
+			const eased = progress < 0.5 
+				? 4 * progress * progress * progress 
+				: 1 - Math.pow(-2 * progress + 2, 3) / 2;
 			currentHeight = maxHeight * (1 - eased);
 		} else {
 			// Done - early exit for performance
@@ -90,7 +92,7 @@
 		<T.LineBasicMaterial
 			color={pointColor}
 			transparent={true}
-			opacity={opacity * 0.7}
+			opacity={opacity * 0.99 * 0.7}
 			toneMapped={false}
 		/>
 	</T.Line>

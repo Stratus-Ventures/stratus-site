@@ -28,13 +28,13 @@ export interface AnimatedEvent extends GlobeEvent {
 const PHOENIX_LAT = 33.4484;
 const PHOENIX_LNG = -112.074;
 const EVENTS_PER_MONTH = 20;
-const ANIMATION_DURATION = 9000; // 9 seconds total (rise 2s + hold 5s + fall 2s)
-const MIN_CYCLE_DELAY = 2000; // 2 seconds minimum between events
-const MAX_CYCLE_DELAY = 5000; // 5 seconds maximum between events
+const ANIMATION_DURATION = 6500; // 6.5 seconds total (rise 1.5s + hold 3.5s + fall 1.5s)
+const MIN_CYCLE_DELAY = 1500; // 1.5 seconds minimum between events
+const MAX_CYCLE_DELAY = 3500; // 3.5 seconds maximum between events
 const MAX_ARCS = 2; // Max simultaneous subscription arcs
-const MAX_POINTS = 3; // Max simultaneous user points
-const MAX_TOTAL_EVENTS = 3; // Max total simultaneous events
-const MIN_INITIAL_EVENTS = 2; // Start with at least 2 events
+const MAX_POINTS = 5; // Max simultaneous user points (increased from 3)
+const MAX_TOTAL_EVENTS = 7; // Max total simultaneous events (increased from 3)
+const MIN_INITIAL_EVENTS = 3; // Start with at least 3 events
 
 // ============================================================================
 // FALLBACK TEST DATA
@@ -388,16 +388,28 @@ let animationCounter = 0;
 // ============================================================================
 
 /**
+ * Randomizes event types for more dynamic visualization
+ * 60% user_created, 40% subscription_activated
+ */
+function randomizeEventTypes(events: GlobeEvent[]): GlobeEvent[] {
+	return events.map(event => ({
+		...event,
+		event_type: Math.random() < 0.6 ? 'user_created' : 'subscription_activated'
+	}));
+}
+
+/**
  * Loads random diverse events from test data
  * Randomizes and removes duplicates at same coordinates
  * Optimized for performance with early returns
  */
 export async function loadGlobeEvents(): Promise<void> {
 	// Use random diverse geo locations (future-proofed for real data later)
-	// Pre-filter and shuffle for better performance
-	const events = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
+	// Pre-filter, shuffle, and randomize event types for better performance
+	const baseEvents = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
+	const randomizedEvents = randomizeEventTypes(baseEvents);
 	// Using diverse random events for globe visualization
-	allEvents.set(events);
+	allEvents.set(randomizedEvents);
 }
 
 /**

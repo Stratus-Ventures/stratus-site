@@ -35,16 +35,16 @@
 	<!-- MAIN -->
 	<main
 		class="
-        mt-8 flex h-fit w-full max-w-6xl
+        flex h-fit w-full max-w-6xl
         flex-col items-center
-        justify-start gap-16
+        justify-start gap-16 sm:mt-8
      "
 	>
 		<!-- HERO SECTION -->
 		<section
 			class="
             flex h-fit w-full flex-col items-center
-            justify-start gap-5 sm:flex-row sm:gap-8
+            justify-start gap-5 md:flex-row sm:gap-8
         "
 		>
 			<!-- CONTENT CONTAINER -->
