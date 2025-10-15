@@ -29,7 +29,7 @@
 	class="
     theme-transition flex h-fit w-full min-w-xs flex-col
     items-center justify-start
-    px-5 pb-5 pt-5 antialiased sm:h-screen sm:px-16 sm:pb-16 lg:pt-16 overflow-x-hidden
+    px-5 pb-5 pt-5 antialiased min-h-screen sm:px-16 sm:pb-16 lg:pt-16 overflow-x-hidden
 	"
 >
 	<!-- MAIN -->
