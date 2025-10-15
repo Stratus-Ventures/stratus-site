@@ -13,30 +13,57 @@ const STORAGE_KEY = 'stratus_auth_state';
 
 // Load initial state from localStorage if in browser
 const loadStoredState = (): AuthState => {
+	const defaultState: AuthState = {
+		isAuthenticated: false,
+		timestamp: null
+	};
+
 	if (!browser) {
-		return {
-			isAuthenticated: false,
-			timestamp: null
-		};
+		return defaultState;
 	}
 
 	try {
 		const stored = localStorage.getItem(STORAGE_KEY);
-		if (stored) {
-			const parsed = JSON.parse(stored) as AuthState;
-			// Check if auth is still valid (within 2 hours)
-			if (parsed.timestamp && Date.now() - parsed.timestamp < 2 * 60 * 60 * 1000) {
-				return parsed;
-			}
+		if (!stored) {
+			return defaultState;
 		}
-	} catch (error) {
-		console.error('Failed to load auth state from localStorage:', error);
-	}
 
-	return {
-		isAuthenticated: false,
-		timestamp: null
-	};
+		const parsed = JSON.parse(stored) as AuthState;
+
+		// Validate the parsed data structure
+		if (typeof parsed.isAuthenticated !== 'boolean' || typeof parsed.timestamp !== 'number') {
+			console.warn('Invalid auth state structure in localStorage, clearing...');
+			localStorage.removeItem(STORAGE_KEY);
+			return defaultState;
+		}
+
+		// Check if auth is still valid (within 2 hours)
+		if (parsed.timestamp && Date.now() - parsed.timestamp < 2 * 60 * 60 * 1000) {
+			return parsed;
+		}
+
+		// Auth has expired, clear it
+		localStorage.removeItem(STORAGE_KEY);
+		return defaultState;
+	} catch (error) {
+		// Handle JSON parse errors or localStorage access errors
+		if (error instanceof SyntaxError) {
+			console.error('Failed to parse auth state from localStorage, clearing corrupted data:', error);
+		} else if (error instanceof DOMException) {
+			console.error('localStorage is not available or quota exceeded:', error);
+		} else {
+			console.error('Unexpected error loading auth state:', error);
+		}
+
+		// Try to clear the corrupted data
+		try {
+			localStorage.removeItem(STORAGE_KEY);
+		} catch (clearError) {
+			console.error('Failed to clear corrupted auth state:', clearError);
+		}
+
+		return defaultState;
+	}
 };
 
 const initialState: AuthState = loadStoredState();
@@ -48,9 +75,22 @@ export const authStore = writable<AuthState>(initialState);
 if (browser) {
 	authStore.subscribe((state) => {
 		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+			// Only save if authenticated, otherwise remove
+			if (state.isAuthenticated && state.timestamp) {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+			} else {
+				localStorage.removeItem(STORAGE_KEY);
+			}
 		} catch (error) {
-			console.error('Failed to save auth state to localStorage:', error);
+			if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+				console.error('localStorage quota exceeded, unable to save auth state');
+				// Clear auth state since we can't persist it
+				authStore.set({ isAuthenticated: false, timestamp: null });
+			} else if (error instanceof DOMException) {
+				console.error('localStorage is not available:', error);
+			} else {
+				console.error('Failed to save auth state to localStorage:', error);
+			}
 		}
 	});
 }
@@ -71,7 +111,7 @@ export function setAuthenticated(isAuth: boolean): void {
 
 export function clearAuthState(): void {
 	// 1. Reset auth state to initial values
-	// 2. Clear from localStorage
+	// 2. Clear from localStorage with error handling
 
 	// ------------------------------------------------------------------- //
 
@@ -81,9 +121,18 @@ export function clearAuthState(): void {
 		timestamp: null
 	});
 
-	// [ STEP 2. ] - Clear from localStorage
+	// [ STEP 2. ] - Clear from localStorage with error handling
 	if (browser) {
-		localStorage.removeItem(STORAGE_KEY);
+		try {
+			localStorage.removeItem(STORAGE_KEY);
+		} catch (error) {
+			if (error instanceof DOMException) {
+				console.error('Failed to clear auth state from localStorage (localStorage unavailable):', error);
+			} else {
+				console.error('Unexpected error clearing auth state:', error);
+			}
+			// Auth is already cleared in memory, so this is not critical
+		}
 	}
 }
 
