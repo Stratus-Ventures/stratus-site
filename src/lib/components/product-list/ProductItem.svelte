@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Product } from '$lib/types';
 	import type { ProductState } from '$lib';
-	import { Button } from '$lib';
+	import { Button, cn } from '$lib';
 
 	interface Props {
 		product: Product;
@@ -43,7 +43,9 @@
 			<p class="paragraph w-full text-start text-secondary-fg">{product.tagline}</p>
 		</div>
 
-		<Button onClick={startEdit} label="Edit" variant="outlined" />
+		<div class={cn("w-full sm:w-fit")}>
+			<Button onClick={startEdit} label="Edit" variant="outlined" />
+		</div>
 	</div>
 
 	<!-- STATE :: DEFAULT VIEW -->

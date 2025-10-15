@@ -9,13 +9,51 @@ interface AuthState {
 	timestamp: number | null;
 }
 
-const initialState: AuthState = {
-	isAuthenticated: false,
-	timestamp: null
+const STORAGE_KEY = 'stratus_auth_state';
+
+// Load initial state from localStorage if in browser
+const loadStoredState = (): AuthState => {
+	if (!browser) {
+		return {
+			isAuthenticated: false,
+			timestamp: null
+		};
+	}
+
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored) {
+			const parsed = JSON.parse(stored) as AuthState;
+			// Check if auth is still valid (within 2 hours)
+			if (parsed.timestamp && Date.now() - parsed.timestamp < 2 * 60 * 60 * 1000) {
+				return parsed;
+			}
+		}
+	} catch (error) {
+		console.error('Failed to load auth state from localStorage:', error);
+	}
+
+	return {
+		isAuthenticated: false,
+		timestamp: null
+	};
 };
+
+const initialState: AuthState = loadStoredState();
 
 // Create writable store for auth state
 export const authStore = writable<AuthState>(initialState);
+
+// Subscribe to store changes and persist to localStorage
+if (browser) {
+	authStore.subscribe((state) => {
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+		} catch (error) {
+			console.error('Failed to save auth state to localStorage:', error);
+		}
+	});
+}
 
 //  C L I E N T - S I D E   H E L P E R S  ------------------------------------------- //
 
@@ -33,11 +71,20 @@ export function setAuthenticated(isAuth: boolean): void {
 
 export function clearAuthState(): void {
 	// 1. Reset auth state to initial values
+	// 2. Clear from localStorage
 
 	// ------------------------------------------------------------------- //
 
 	// [ STEP 1. ] - Reset auth state to initial values
-	authStore.set(initialState);
+	authStore.set({
+		isAuthenticated: false,
+		timestamp: null
+	});
+
+	// [ STEP 2. ] - Clear from localStorage
+	if (browser) {
+		localStorage.removeItem(STORAGE_KEY);
+	}
 }
 
 export function cleanAuthFromUrl(): void {
