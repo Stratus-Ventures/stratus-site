@@ -37,7 +37,7 @@
 		class="
         flex h-fit w-full max-w-6xl
         flex-col items-center
-        justify-start gap-16 sm:mt-16
+        justify-start gap-16
      "
 	>
 		<!-- HERO SECTION -->
