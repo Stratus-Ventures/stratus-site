@@ -148,7 +148,7 @@ export async function requestAuthCode(baseUrl: string): Promise<string> {
 	try {
 		logger.info('Calling sendAuthCodeEmail...');
 		await sendAuthCodeEmail(code, testUrl);
-		logger.success('✅ Auth code email sent on request', { code });
+		logger.success('✅ Auth code email sent on request');
 	} catch (error) {
 		logger.error('❌ Failed to send requested auth code email', error);
 		throw error;
@@ -215,7 +215,8 @@ export async function processAuthFromUrl(url: URL): Promise<{
 	// [ STEP 2. ] - Validate extracted code
 	if (validateAuthCode(codeFromUrl)) {
 		// [ STEP 3. ] - Handle successful authentication
-		const newCode = await consumeAndRotateCode(url.origin);
+		// Don't pass baseUrl - we don't want to send email when rotating after use
+		const newCode = await consumeAndRotateCode();
 		return {
 			isAuthenticated: true,
 			newCode
