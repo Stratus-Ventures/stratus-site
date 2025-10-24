@@ -9,6 +9,10 @@
 </script>
 
 <svelte:head>
+	<!-- PAGE TITLE AND DESCRIPTION -->
+	<title>Stratus Ventures LLC</title>
+	<meta name="description" content="Stratus Ventures LLC owns a group of AI-forward ventures founded by Jason Coawette and is located in Phoenix, Arizona." />
+	
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href={appleIcon} />
 	
