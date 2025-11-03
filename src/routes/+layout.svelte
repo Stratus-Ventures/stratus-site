@@ -3,7 +3,6 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import banner from '$lib/assets/banner.png';
 	import appleIcon from '$lib/assets/apple-icon.png';
-	import icon from '$lib/assets/icon.png';
 	import '$lib/stores/themeStore';
 
 	let { children } = $props();
@@ -23,10 +22,6 @@
 	<meta property="og:image" content={banner} />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://stratus-ventures.org" />
-	
-	<!-- Profile Image for Railway -->
-	<meta property="og:image:type" content="image/png" />
-	<link rel="profile-image" href={icon} />
 	
 	<!-- Twitter Card Meta Tags -->
 	<meta name="twitter:card" content="summary_large_image" />
