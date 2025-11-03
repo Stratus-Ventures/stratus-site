@@ -23,6 +23,10 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://stratus-ventures.org" />
 	
+	<!-- Profile Image for Railway -->
+	<meta property="og:image:type" content="image/png" />
+	<link rel="profile-image" href="https://stratus-ventures.org/icon.png" />
+	
 	<!-- Twitter Card Meta Tags -->
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Stratus" />
