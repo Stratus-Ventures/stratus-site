@@ -72,8 +72,7 @@
 				<p class="paragraph line-clamp-4 w-full max-w-120 min-w-80 sm:w-fit text-secondary-fg select-none">
 					Stratus Ventures LLC owns a group of AI-forward ventures founded by
 					<a href="https://jasoncoawette.com" class="title link-text text-primary-fg"
-						>Jason Coawette</a
-					>
+						>Jason Coawette</a>
 					and is located in Phoenix, Arizona.
 				</p>
 
