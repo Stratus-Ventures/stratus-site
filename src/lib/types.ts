@@ -13,7 +13,6 @@ export type StratusMetricType =
 	| 'user_created'
 	| 'download_started'
 	| 'subscription_activated'
-	| 'api_calls';
 
 export interface StratusMetric {
 	id?: string;

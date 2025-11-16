@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { T } from '@threlte/core';
 	import { HTML, Billboard } from '@threlte/extras';
 	import { latLngToSphere } from '$lib/utils/geo';
 	import { getPhoenixCoords } from '$lib/services/GlobeService';
@@ -25,7 +26,7 @@
 
 	<!-- Marker dot -->
 	<Billboard>
-		<HTML occlude center pointerEvents="none" zIndexRange={[1000, 1000]}>
+		<HTML occlude center pointerEvents="none">
 			<div
 				class="bg-primary pointer-events-none h-[1.2rem] w-[1.2rem] rounded-full border-[3px] border-primary-fg"
 			></div>
@@ -34,7 +35,7 @@
 
 	<!-- Label -->
 	<Billboard>
-		<HTML occlude pointerEvents="none" zIndexRange={[1000, 1000]}>
+		<HTML occlude pointerEvents="none">
 			<div class="pointer-events-none -mt-20 -ml-28">
 				<div class="flex flex-col items-start">
 					<span class="font-mono text-base font-semibold tracking-tight text-primary-fg">

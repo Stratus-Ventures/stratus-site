@@ -20,10 +20,11 @@
 
 <div
 	class={cn(
-		'flex h-fit w-full flex-wrap items-start justify-start gap-4 lg:justify-center',
+		'flex h-fit w-full flex-wrap items-start justify-start gap-4 lg:justify-end lg:mt-4 lg:pr-10',
 		className
 	)}
 >
+
 	{#each displayMetrics as metric, index}
 		<Metric name={metric.name} data={metric.value} {index} />
 	{/each}

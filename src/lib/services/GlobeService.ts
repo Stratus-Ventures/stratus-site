@@ -85,9 +85,8 @@ const MAJOR_CITIES = [
 
 const EVENT_TYPES: StratusMetricType[] = [
 	'user_created',
-	'download_started', 
-	'subscription_activated',
-	'api_calls'
+	'download_started',
+	'subscription_activated'
 ];
 
 /**
@@ -502,7 +501,7 @@ function canAddEvent(currentEvents: AnimatedEvent[], newEventType: StratusMetric
 		return false;
 	}
 
-	return !((newEventType === 'user_created' || newEventType === 'download_started' || newEventType === 'api_calls')
+	return !((newEventType === 'user_created' || newEventType === 'download_started')
 		&& counts.points >= maxPerType * 3);
 
 

@@ -15,8 +15,7 @@ import { sql } from 'drizzle-orm';
 export const stratusMetricEnum = pgEnum('stratus_metric_type', [
 	'user_created',
 	'download_started',
-	'subscription_activated',
-	'api_calls'
+	'subscription_activated'
 ]);
 
 //  T A B L E   D E F E N I T I O N S  ----------------------------------------------- //
@@ -85,10 +84,7 @@ export const totalEventCount = pgView('totalEventCount')
 				subscription_activated_total:
 					sql`count(*) filter (where ${stratusMetrics.event_type} = 'subscription_activated')`.as(
 						'subscription_activated_total'
-					),
-				api_calls_total: sql`count(*) filter (where ${stratusMetrics.event_type} = 'api_calls')`.as(
-					'api_calls_total'
-				)
+					)
 			})
 			.from(stratusMetrics)
 	);

@@ -35,7 +35,7 @@
 	<!-- MAIN -->
 	<main
 		class="
-        flex h-fit w-full max-w-6xl
+        flex h-fit w-full max-w-5xl
         flex-col items-center
         justify-start gap-16
      "
@@ -44,7 +44,7 @@
 		<section	
 			class="
             flex h-fit w-full flex-col items-center justify-center
-            lg:justify-between lg:flex-row gap-5 lg:gap-5
+            lg:justify-between lg:flex-row gap-5
         "
 		>
 			<!-- CONTENT CONTAINER -->
@@ -97,7 +97,7 @@
 			<div
 				class="
 					order-1 flex
-					h-fit w-full flex-col items-center
+					h-fit w-full flex-col items-center lg:items-end
 					justify-center lg:order-2
             	"
 			>

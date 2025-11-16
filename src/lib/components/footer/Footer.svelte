@@ -6,7 +6,7 @@
 	class="
     flex h-fit w-full flex-row
     items-center justify-between
-    pb-8 sm:pb-16
+    pb-8 sm:pb-16 lg:mt-4
 "
 >
 	<span
