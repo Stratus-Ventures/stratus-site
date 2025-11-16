@@ -13,13 +13,13 @@
 	// ------------------------------------------------------------------- //
 
 	onMount(() => {
-		// [ STEP 1. ] - Handle successful authentication
+		// [ STEP 1.] - Handle successful authentication
 		if (data.auth?.isAuthenticated) {
 			completeAuthFlow();
 		}
-		// [ STEP 2. ] - Handle authentication errors
+		// [ STEP 2.] - Handle authentication errors
 		else if (data.auth?.error) {
-			// [ STEP 3. ] - Manage auth flow completion
+			// [ STEP 3.] - Manage auth flow completion
 			clearAuthState();
 		}
 	});
@@ -59,9 +59,9 @@
 				<!-- LOGO & H1 -->
 				<div
 					class="
-                    flex h-fit w-fit flex-row
-                    items-center justify-center
-                    gap-3
+									flex h-fit w-fit flex-row
+									items-center justify-center
+									gap-3
                 "
 				>
 					<Logo size={60} />
@@ -79,13 +79,13 @@
 				<!-- BUTTON WRAPPER -->
 				<div
 					class="
-                    mt-5 flex h-fit w-full flex-row
-                    items-center justify-center lg:justify-start
-                    gap-3
+									mt-5 flex h-fit w-full flex-row
+									items-center justify-center lg:justify-start
+									gap-3
                 "
 				>
 					<Button
-						href="https://cal.com/stratus-ventures.org/coffee-chat"
+						href="https://cal.com/jason-coawette/1-1-video-consultation?overlayCalendar=true"
 						label="Book a Call"
 						shimmer={true}
 					/>

@@ -18,16 +18,16 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			return new Response(
 				`
                 <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Auth Code Sent</title>
-                </head>
-                <body>
-                    <script>
-                        alert('Auth code sent!');
-                        window.history.back();
-                    </script>
-                </body>
+                <html lang="none">
+									<head>
+											<title>Auth Code Sent</title>
+									</head>
+									<body>
+											<script>
+													alert('Auth code sent!');
+													window.history.back();
+											</script>
+									</body>
                 </html>
             `,
 				{
@@ -50,16 +50,16 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			return new Response(
 				`
                 <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Error</title>
-                </head>
-                <body>
-                    <script>
-                        alert('Failed to send auth code');
-                        window.history.back();
-                    </script>
-                </body>
+                <html lang="none">
+									<head>
+											<title>Error</title>
+									</head>
+									<body>
+											<script>
+													alert('Failed to send auth code');
+													window.history.back();
+											</script>
+									</body>
                 </html>
             `,
 				{

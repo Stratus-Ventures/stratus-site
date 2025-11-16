@@ -23,23 +23,22 @@
 
 	// ------------------------------------------------------------------- //
 
-	// [ STEP 1. ] - Compute button classes based on variant
+	// [ STEP 1.] - Compute button classes based on variant
 	let classes = $derived(`
         flex w-full lg:w-fit h-fit items-center justify-center relative
         rounded-lg button-label px-6 py-3 select-none cursor-pointer theme-transition
         ${
 			variant === 'outlined'
 				? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
-				: 'bg-button-bg border-1 border-button-bg text-button-fg'
-		}
+				: 'bg-button-bg border-1 border-button-bg text-button-fg' 		}
     `);
 
-	// [ STEP 2. ] - Handle shimmer animation with CSS-only approach
+	// [ STEP 2.] - Handle shimmer animation with CSS-only approach
 	let shimmerClasses = $derived(
 		shimmer && variant === 'filled' ? 'shimmer-text relative' : 'relative'
 	);
 
-	// [ STEP 3. ] - Handle width adjustment
+	// [ STEP 3.] - Handle width adjustment
 	let shimmerWidth = $derived.by(() => {
 		if (typeof window === 'undefined') return '200%';
 		// Use 300% for mobile (full-width buttons) to maintain speed
