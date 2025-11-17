@@ -20,7 +20,7 @@
 
 <div
 	class={cn(
-		'flex h-fit w-full flex-wrap items-start justify-start gap-4 lg:justify-end lg:mt-4 lg:pr-10',
+		'flex h-fit w-full flex-wrap items-start justify-start lg:justify-end gap-4 lg:mt-4 lg:pr-16',
 		className
 	)}
 >

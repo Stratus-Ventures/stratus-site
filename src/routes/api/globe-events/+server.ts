@@ -25,9 +25,17 @@ export const GET: RequestHandler = async () => {
 		// If less than 20 events, try previous months
 		let monthsChecked = 0;
 		const maxMonthsToCheck = 6; // Don't go back more than 6 months
+		let consecutiveEmptyMonths = events.length === 0 ? 1 : 0; // Track empty months
 
 		while (events.length < 20 && monthsChecked < maxMonthsToCheck) {
 			monthsChecked++;
+
+			// Early exit: If we've checked 2 months and found 0 events total, stop
+			// (Database is likely empty or hasn't been populated yet)
+			if (consecutiveEmptyMonths >= 2) {
+				logger.info(`No events found after checking ${consecutiveEmptyMonths} months - stopping search`);
+				break;
+			}
 
 			// Calculate previous month range
 			const prevStartOfMonth = new Date(currentYear, currentMonth - monthsChecked, 1);
@@ -47,6 +55,14 @@ export const GET: RequestHandler = async () => {
 			});
 
 			const prevMonthEvents = await fetchEventsForPeriod(prevStartOfMonth, prevEndOfMonth);
+
+			// Track consecutive empty months
+			if (prevMonthEvents.length === 0) {
+				consecutiveEmptyMonths++;
+			} else {
+				consecutiveEmptyMonths = 0;
+			}
+
 			events = [...events, ...prevMonthEvents];
 
 			// Stop if we have enough

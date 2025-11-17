@@ -20,25 +20,12 @@ export const load: PageServerLoad = async ({ url }) => {
 		const products: Product[] = await getFormattedProducts(db);
 
 		// ================================================================
-		// METRICS SYNC & DATA
+		// METRICS DATA
 		// ================================================================
-		// TEMPORARY: Auto-sync metrics on page load to populate data
-		// TODO: Remove this once initial sync is complete
+		// NOTE: Metrics are synced via server-side endpoint /api/sync-metrics
+		// Set up a cron job to call this endpoint periodically (e.g., every 15 minutes)
+		// Example cron: */15 * * * * curl https://your-domain.com/api/sync-metrics
 		// ================================================================
-		try {
-			logger.info('Auto-syncing metrics on page load (temporary)');
-			const syncResult = await syncAllProductMetrics();
-			logger.info('Metrics sync completed', {
-				totalProducts: syncResult.totalProducts,
-				successful: syncResult.successfulSyncs,
-				failed: syncResult.failedSyncs
-			});
-		} catch (error) {
-			logger.error('Failed to auto-sync metrics on page load', error);
-			// Continue loading page even if sync fails
-		}
-
-		// Then get the updated metrics for display
 		const metrics = await getMetrics();
 
 		// ================================================================

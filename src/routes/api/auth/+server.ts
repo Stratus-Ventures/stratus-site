@@ -5,7 +5,7 @@ import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
-		logger.info('📬 API /request-auth called');
+		logger.info('📬 API /auth called');
 		logger.info('Origin:', url.origin);
 		await requestAuthCode(url.origin);
 		logger.success('✅ Auth code requested via GET');

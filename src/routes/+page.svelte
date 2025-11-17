@@ -44,7 +44,7 @@
 		<section	
 			class="
             flex h-fit w-full flex-col items-center justify-center
-            lg:justify-between lg:flex-row gap-5
+            lg:justify-between lg:flex-row gap-5 lg:pl-14
         "
 		>
 			<!-- CONTENT CONTAINER -->

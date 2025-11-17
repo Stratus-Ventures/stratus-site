@@ -6,7 +6,8 @@ import {
 	pgEnum,
 	varchar,
 	pgView,
-	uuid
+	uuid,
+	boolean
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -24,7 +25,8 @@ export const stratusProducts = pgTable('stratus_products', {
 	id: uuid().primaryKey().defaultRandom(),
 	name: text().notNull().unique(),
 	tagline: text().notNull(),
-	url: text().notNull()
+	url: text().notNull(),
+	is_live: boolean().notNull().default(false)
 }).enableRLS();
 
 export const stratusMetrics = pgTable('stratus_metrics', {

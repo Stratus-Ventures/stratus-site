@@ -261,7 +261,7 @@ export async function syncProductMetrics(
 }
 
 /**
- * Syncs metrics for all products
+ * Syncs metrics for all live products
  */
 export async function syncAllProductMetrics(database = db): Promise<{
 	totalProducts: number;
@@ -275,8 +275,8 @@ export async function syncAllProductMetrics(database = db): Promise<{
 	}>;
 }> {
 	try {
-		// Get all products
-		const products = await database.select().from(stratusProducts);
+		// Get all live products only
+		const products = await database.select().from(stratusProducts).where(eq(stratusProducts.is_live, true));
 
 		// Rate-limited parallel sync (max 3 concurrent requests)
 		const CONCURRENCY_LIMIT = 3;

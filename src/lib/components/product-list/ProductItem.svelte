@@ -60,7 +60,7 @@
             hover:opacity-50 sm:flex-row sm:items-center
         "
 	>
-		<h3 class="title w-full text-start text-primary-fg sm:max-w-md" data-text={product.name}>
+		<h3 class="title w-full text-start text-primary-fg sm:max-w-sm" data-text={product.name}>
 			{product.name}
 		</h3>
 		<p class="paragraph w-full text-start text-secondary-fg">{product.tagline}</p>

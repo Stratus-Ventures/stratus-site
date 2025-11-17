@@ -11,6 +11,7 @@ export interface CreateProductData {
 	name: string;
 	tagline: string;
 	url: string;
+	is_live: boolean;
 }
 
 export interface UpdateProductData {
@@ -18,20 +19,22 @@ export interface UpdateProductData {
 	name: string;
 	tagline: string;
 	url: string;
+	is_live: boolean;
 }
 
 /**
  * Creates a new product in the database
  */
 export async function createProduct(data: CreateProductData, database = db) {
-	const { name, tagline, url } = data;
+	const { name, tagline, url, is_live } = data;
 
 	const result = await database
 		.insert(stratusProducts)
 		.values({
 			name,
 			tagline,
-			url
+			url,
+			is_live
 		})
 		.returning();
 
@@ -54,11 +57,11 @@ export async function createProduct(data: CreateProductData, database = db) {
  * Updates an existing product in the database
  */
 export async function updateProduct(data: UpdateProductData, database = db) {
-	const { id, name, tagline, url } = data;
+	const { id, name, tagline, url, is_live } = data;
 
 	await database
 		.update(stratusProducts)
-		.set({ name, tagline, url })
+		.set({ name, tagline, url, is_live })
 		.where(eq(stratusProducts.id, id));
 }
 
@@ -80,6 +83,7 @@ export function validateProductData(formData: FormData): {
 	const name = formData.get('name') as string;
 	const tagline = formData.get('tagline') as string;
 	const url = formData.get('url') as string;
+	const is_live = formData.get('is_live') === 'true';
 	const id = formData.get('id') as string;
 
 	if (!name || !tagline || !url) {
@@ -89,7 +93,7 @@ export function validateProductData(formData: FormData): {
 		};
 	}
 
-	const baseData = { name, tagline, url };
+	const baseData = { name, tagline, url, is_live };
 
 	if (id) {
 		return {

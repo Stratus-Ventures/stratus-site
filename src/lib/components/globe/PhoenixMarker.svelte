@@ -11,12 +11,12 @@
 	const { radius }: Props = $props();
 	const phoenix = getPhoenixCoords();
 
-	// Position slightly above globe surface to avoid arc occlusion
+	// Position slightly above globe surface
 	const position = $derived.by(() => {
 		const v = latLngToSphere(phoenix.lat, phoenix.lng, radius);
-		// Move slightly outward along the normal to avoid arc occlusion
+		// Move slightly outward along the normal
 		const normal = v.clone().normalize();
-		const offset = normal.multiplyScalar(radius * 0.01); // 1% of radius outward
+		const offset = normal.multiplyScalar(radius * 0.015); // 1.5% of radius outward
 		const finalPos = v.add(offset);
 		return [finalPos.x, finalPos.y, finalPos.z] as [number, number, number];
 	});

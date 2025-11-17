@@ -69,7 +69,7 @@
 <div
 	class="
     flex h-fit w-full flex-col
-    items-center justify-center gap-12
+    items-center justify-center gap-12 lg:px-14
 "
 >
 	<div
