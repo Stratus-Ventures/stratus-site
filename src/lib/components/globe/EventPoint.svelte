@@ -75,7 +75,14 @@
 	<!-- Rising point diamond (rotated octahedron) -->
 	<T.Mesh position={currentPosition} rotation={[0, 0, Math.PI / 4]}>
 		<T.OctahedronGeometry args={[radius * 0.02, 0]} />
-		<T.MeshBasicMaterial color={pointColor} transparent={true} {opacity} toneMapped={false} />
+		<T.MeshBasicMaterial
+			color={pointColor}
+			transparent={true}
+			{opacity}
+			toneMapped={false}
+			depthWrite={false}
+			depthTest={true}
+		/>
 	</T.Mesh>
 
 	<!-- Connecting line from surface to point (70% opacity) -->
@@ -94,6 +101,8 @@
 			transparent={true}
 			opacity={opacity * 0.99 * 0.7}
 			toneMapped={false}
+			depthWrite={false}
+			depthTest={true}
 		/>
 	</T.Line>
 {/if}

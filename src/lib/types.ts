@@ -5,6 +5,7 @@ export interface StratusProduct {
 	name: string; // Product name
 	tagline: string; // Product tagline
 	url: string; // Product URL
+	is_live: boolean; // Whether the product is live and should be synced
 }
 
 export type Product = StratusProduct;
@@ -13,7 +14,6 @@ export type StratusMetricType =
 	| 'user_created'
 	| 'download_started'
 	| 'subscription_activated'
-	| 'api_calls';
 
 export interface StratusMetric {
 	id?: string;

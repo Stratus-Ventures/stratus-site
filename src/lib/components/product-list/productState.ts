@@ -15,6 +15,7 @@ export interface ProductFormData {
 	name: string;
 	tagline: string;
 	url: string;
+	is_live: boolean;
 }
 
 export interface ProductState {
@@ -101,14 +102,15 @@ export function handleEditProduct(product: Product, state: ProductState): void {
 	state.formData = {
 		name: product.name,
 		tagline: product.tagline,
-		url: product.url || ''
+		url: product.url || '',
+		is_live: product.is_live
 	};
 }
 
 // [ STEP 2. ] - Start adding a new product
 export function handleAddProduct(state: ProductState): void {
 	state.isAddingProduct = true;
-	state.formData = { name: '', tagline: '', url: '' };
+	state.formData = { name: '', tagline: '', url: '', is_live: false };
 }
 
 // [ STEP 3. ] - Save product changes (via enhanced form submission)
@@ -120,11 +122,12 @@ export async function saveProduct(product: Product, state: ProductState): Promis
 			id: product.id,
 			name: state.formData.name,
 			tagline: state.formData.tagline,
-			url: formatUrl(state.formData.url)
+			url: formatUrl(state.formData.url),
+			is_live: state.formData.is_live.toString()
 		});
 
 		state.editingProductId = null;
-		state.formData = { name: '', tagline: '', url: '' };
+		state.formData = { name: '', tagline: '', url: '', is_live: false };
 	} catch (error) {
 		alert('Error saving product changes');
 	}
@@ -150,11 +153,12 @@ export async function addProduct(state: ProductState): Promise<void> {
 		await submitForm('?/createProduct', {
 			name: state.formData.name,
 			tagline: state.formData.tagline,
-			url: formatUrl(state.formData.url)
+			url: formatUrl(state.formData.url),
+			is_live: state.formData.is_live.toString()
 		});
 
 		state.isAddingProduct = false;
-		state.formData = { name: '', tagline: '', url: '' };
+		state.formData = { name: '', tagline: '', url: '', is_live: false };
 	} catch (error) {
 		alert('Error adding product');
 	}
@@ -164,7 +168,7 @@ export async function addProduct(state: ProductState): Promise<void> {
 export function handleCancelEdit(state: ProductState): void {
 	state.editingProductId = null;
 	state.isAddingProduct = false;
-	state.formData = { name: '', tagline: '', url: '' };
+	state.formData = { name: '', tagline: '', url: '', is_live: false };
 }
 
 // [ STEP 7. ] - Calculate shimmer width based on screen size

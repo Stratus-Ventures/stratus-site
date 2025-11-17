@@ -11,12 +11,12 @@
 	const { radius }: Props = $props();
 	const phoenix = getPhoenixCoords();
 
-	// Position slightly above globe surface to avoid arc occlusion
+	// Position slightly above globe surface
 	const position = $derived.by(() => {
 		const v = latLngToSphere(phoenix.lat, phoenix.lng, radius);
-		// Move slightly outward along the normal to avoid arc occlusion
+		// Move slightly outward along the normal
 		const normal = v.clone().normalize();
-		const offset = normal.multiplyScalar(radius * 0.01); // 1% of radius outward
+		const offset = normal.multiplyScalar(radius * 0.015); // 1.5% of radius outward
 		const finalPos = v.add(offset);
 		return [finalPos.x, finalPos.y, finalPos.z] as [number, number, number];
 	});
@@ -26,7 +26,7 @@
 
 	<!-- Marker dot -->
 	<Billboard>
-		<HTML occlude center pointerEvents="none" zIndexRange={[1000, 900]}>
+		<HTML occlude center pointerEvents="none">
 			<div
 				class="bg-primary pointer-events-none h-[1.2rem] w-[1.2rem] rounded-full border-[3px] border-primary-fg"
 			></div>
@@ -35,7 +35,7 @@
 
 	<!-- Label -->
 	<Billboard>
-		<HTML occlude pointerEvents="none" zIndexRange={[1000, 900]}>
+		<HTML occlude pointerEvents="none">
 			<div class="pointer-events-none -mt-20 -ml-28">
 				<div class="flex flex-col items-start">
 					<span class="font-mono text-base font-semibold tracking-tight text-primary-fg">

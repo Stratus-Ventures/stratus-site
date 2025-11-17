@@ -13,13 +13,13 @@
 	// ------------------------------------------------------------------- //
 
 	onMount(() => {
-		// [ STEP 1. ] - Handle successful authentication
+		// [ STEP 1.] - Handle successful authentication
 		if (data.auth?.isAuthenticated) {
 			completeAuthFlow();
 		}
-		// [ STEP 2. ] - Handle authentication errors
+		// [ STEP 2.] - Handle authentication errors
 		else if (data.auth?.error) {
-			// [ STEP 3. ] - Manage auth flow completion
+			// [ STEP 3.] - Manage auth flow completion
 			clearAuthState();
 		}
 	});
@@ -35,7 +35,7 @@
 	<!-- MAIN -->
 	<main
 		class="
-        flex h-fit w-full max-w-6xl
+        flex h-fit w-full max-w-5xl
         flex-col items-center
         justify-start gap-16
      "
@@ -44,7 +44,7 @@
 		<section	
 			class="
             flex h-fit w-full flex-col items-center justify-center
-            lg:justify-between lg:flex-row gap-5 lg:gap-5
+            lg:justify-between lg:flex-row gap-5 lg:pl-14
         "
 		>
 			<!-- CONTENT CONTAINER -->
@@ -59,9 +59,9 @@
 				<!-- LOGO & H1 -->
 				<div
 					class="
-                    flex h-fit w-fit flex-row
-                    items-center justify-center
-                    gap-3
+									flex h-fit w-fit flex-row
+									items-center justify-center
+									gap-3
                 "
 				>
 					<Logo size={60} />
@@ -72,21 +72,20 @@
 				<p class="paragraph line-clamp-4 w-full max-w-120 min-w-80 sm:w-fit text-secondary-fg select-none">
 					Stratus Ventures LLC owns a group of AI-forward ventures founded by
 					<a href="https://jasoncoawette.com" class="title link-text text-primary-fg"
-						>Jason Coawette</a
-					>
+						>Jason Coawette</a>
 					and is located in Phoenix, Arizona.
 				</p>
 
 				<!-- BUTTON WRAPPER -->
 				<div
 					class="
-                    mt-5 flex h-fit w-full flex-row
-                    items-center justify-center lg:justify-start
-                    gap-3
+									mt-5 flex h-fit w-full flex-row
+									items-center justify-center lg:justify-start
+									gap-3
                 "
 				>
 					<Button
-						href="https://cal.com/stratus-ventures.org/coffee-chat"
+						href="https://cal.com/jason-coawette/1-1-video-consultation?overlayCalendar=true"
 						label="Book a Call"
 						shimmer={true}
 					/>
@@ -98,7 +97,7 @@
 			<div
 				class="
 					order-1 flex
-					h-fit w-full flex-col items-center
+					h-fit w-full flex-col items-center lg:items-end
 					justify-center lg:order-2
             	"
 			>

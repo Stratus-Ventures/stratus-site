@@ -6,7 +6,8 @@ import {
 	pgEnum,
 	varchar,
 	pgView,
-	uuid
+	uuid,
+	boolean
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -15,8 +16,7 @@ import { sql } from 'drizzle-orm';
 export const stratusMetricEnum = pgEnum('stratus_metric_type', [
 	'user_created',
 	'download_started',
-	'subscription_activated',
-	'api_calls'
+	'subscription_activated'
 ]);
 
 //  T A B L E   D E F E N I T I O N S  ----------------------------------------------- //
@@ -25,7 +25,8 @@ export const stratusProducts = pgTable('stratus_products', {
 	id: uuid().primaryKey().defaultRandom(),
 	name: text().notNull().unique(),
 	tagline: text().notNull(),
-	url: text().notNull()
+	url: text().notNull(),
+	is_live: boolean().notNull().default(false)
 }).enableRLS();
 
 export const stratusMetrics = pgTable('stratus_metrics', {
@@ -85,10 +86,7 @@ export const totalEventCount = pgView('totalEventCount')
 				subscription_activated_total:
 					sql`count(*) filter (where ${stratusMetrics.event_type} = 'subscription_activated')`.as(
 						'subscription_activated_total'
-					),
-				api_calls_total: sql`count(*) filter (where ${stratusMetrics.event_type} = 'api_calls')`.as(
-					'api_calls_total'
-				)
+					)
 			})
 			.from(stratusMetrics)
 	);

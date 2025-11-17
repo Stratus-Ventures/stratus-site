@@ -20,7 +20,6 @@ export { default as Subscriptions } from './components/icons/Subscriptions.svelt
 export { default as Users } from './components/icons/Users.svelte';
 export { default as Logo } from './components/icons/Logo.svelte';
 export { default as CloseDrawer } from './components/icons/CloseDrawer.svelte';
-export { default as APIIcon } from './components/icons/APIIcon.svelte';
 
 //  S T O R E S  ----------------------------------------------------------------- //
 

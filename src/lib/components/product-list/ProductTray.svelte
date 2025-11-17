@@ -62,7 +62,7 @@
 	<!-- SLIDING TRAY -->
 	<div class="fixed right-0 bottom-0 left-0 z-20" transition:slide={{ duration: 300 }}>
 		<div
-			class="mx-auto w-full max-w-4xl rounded-t-2xl border-t-1 border-border bg-primary-bg
+			class="mx-auto w-full max-w-3xl rounded-t-2xl border-t-1 border-border bg-primary-bg
             px-5 pt-5 pb-24 shadow-lg sm:px-8 sm:pt-8"
 			role="dialog"
 			aria-modal="true"
@@ -118,6 +118,20 @@
                             hover:bg-transparent focus:border-secondary-fg
                             focus:outline-none"
 						/>
+
+						<!-- Is Live Toggle -->
+						<label
+							class="flex w-full cursor-pointer items-center justify-between rounded-lg
+                            border border-border bg-secondary-bg px-4 py-3 transition-colors
+                            hover:bg-transparent"
+						>
+							<span class="text-primary-fg">Live Product?</span>
+							<input
+								type="checkbox"
+								bind:checked={state.formData.is_live}
+								class="h-5 w-5 cursor-pointer accent-primary"
+							/>
+						</label>
 					</div>
 
 					<!-- ACTIONS BUTTON -->

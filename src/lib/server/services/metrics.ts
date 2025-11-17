@@ -21,11 +21,6 @@ export const METRICS_CONFIG = {
 		displayName: 'Subscriptions',
 		dbField: 'subscription_activated_total' as const,
 		enabled: true
-	},
-	api_calls: {
-		displayName: 'API Calls',
-		dbField: 'api_calls_total' as const,
-		enabled: true
 	}
 } as const;
 
@@ -40,7 +35,7 @@ export interface MetricItem {
 
 export interface ExternalMetric {
 	id?: string;
-	event_type: 'user_created' | 'download_started' | 'subscription_activated' | 'api_calls';
+	event_type: 'user_created' | 'download_started' | 'subscription_activated';
 	origin_lat: number;
 	origin_long: number;
 	city_code: string;
@@ -94,8 +89,7 @@ function createEmptyMetricsData(): Record<MetricDbFields, number> {
 	return {
 		user_created_total: 0,
 		download_started_total: 0,
-		subscription_activated_total: 0,
-		api_calls_total: 0
+		subscription_activated_total: 0
 	};
 }
 
@@ -267,7 +261,7 @@ export async function syncProductMetrics(
 }
 
 /**
- * Syncs metrics for all products
+ * Syncs metrics for all live products
  */
 export async function syncAllProductMetrics(database = db): Promise<{
 	totalProducts: number;
@@ -281,8 +275,8 @@ export async function syncAllProductMetrics(database = db): Promise<{
 	}>;
 }> {
 	try {
-		// Get all products
-		const products = await database.select().from(stratusProducts);
+		// Get all live products only
+		const products = await database.select().from(stratusProducts).where(eq(stratusProducts.is_live, true));
 
 		// Rate-limited parallel sync (max 3 concurrent requests)
 		const CONCURRENCY_LIMIT = 3;

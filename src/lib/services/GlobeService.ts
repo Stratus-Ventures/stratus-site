@@ -85,9 +85,8 @@ const MAJOR_CITIES = [
 
 const EVENT_TYPES: StratusMetricType[] = [
 	'user_created',
-	'download_started', 
-	'subscription_activated',
-	'api_calls'
+	'download_started',
+	'subscription_activated'
 ];
 
 /**
@@ -104,8 +103,8 @@ function generateRandomEvents(count: number): GlobeEvent[] {
 		const eventType = EVENT_TYPES[Math.floor(Math.random() * EVENT_TYPES.length)];
 		
 		// Add some random variation to coordinates (±0.5 degrees for variety)
-		const latVariation = (Math.random() - 0.5) * 1.0;
-		const lngVariation = (Math.random() - 0.5) * 1.0;
+		const latVariation = (Math.random() - 0.5);
+		const lngVariation = (Math.random() - 0.5);
 		
 		events.push({
 			id: `random-${i + 1}`,
@@ -159,17 +158,207 @@ function randomizeEventTypes(events: GlobeEvent[]): GlobeEvent[] {
 }
 
 /**
- * Loads random diverse events from test data
- * Randomizes and removes duplicates at same coordinates
- * Optimized for performance with early returns
+ * Geographic regions for diversity checking
+ * Divides the world into 12 zones based on latitude and longitude
+ */
+interface GeoRegion {
+	latMin: number;
+	latMax: number;
+	lngMin: number;
+	lngMax: number;
+	name: string;
+}
+
+const GEO_REGIONS: GeoRegion[] = [
+	// North America
+	{ latMin: 15, latMax: 90, lngMin: -170, lngMax: -50, name: 'North America' },
+	// South America
+	{ latMin: -60, latMax: 15, lngMin: -90, lngMax: -30, name: 'South America' },
+	// Europe
+	{ latMin: 35, latMax: 75, lngMin: -15, lngMax: 50, name: 'Europe' },
+	// Africa
+	{ latMin: -40, latMax: 40, lngMin: -20, lngMax: 55, name: 'Africa' },
+	// Middle East
+	{ latMin: 10, latMax: 45, lngMin: 35, lngMax: 75, name: 'Middle East' },
+	// North Asia
+	{ latMin: 45, latMax: 90, lngMin: 50, lngMax: 180, name: 'North Asia' },
+	// Central Asia
+	{ latMin: 15, latMax: 55, lngMin: 55, lngMax: 105, name: 'Central/East Asia' },
+	// Southeast Asia
+	{ latMin: -15, latMax: 25, lngMin: 90, lngMax: 155, name: 'Southeast Asia' },
+	// Oceania
+	{ latMin: -50, latMax: -10, lngMin: 110, lngMax: 180, name: 'Oceania' },
+	// Pacific Islands
+	{ latMin: -30, latMax: 30, lngMin: 155, lngMax: -140, name: 'Pacific' },
+	// Arctic
+	{ latMin: 65, latMax: 90, lngMin: -180, lngMax: 180, name: 'Arctic' },
+	// Antarctic
+	{ latMin: -90, latMax: -60, lngMin: -180, lngMax: 180, name: 'Antarctic' }
+];
+
+/**
+ * Determines which geographic region an event belongs to
+ */
+function getEventRegion(event: GlobeEvent): string {
+	for (const region of GEO_REGIONS) {
+		// Handle longitude wrapping for Pacific region
+		let inLngRange = false;
+		if (region.lngMin > region.lngMax) {
+			// Wraps around 180/-180
+			inLngRange = event.origin_long >= region.lngMin || event.origin_long <= region.lngMax;
+		} else {
+			inLngRange = event.origin_long >= region.lngMin && event.origin_long <= region.lngMax;
+		}
+
+		if (event.origin_lat >= region.latMin &&
+			event.origin_lat <= region.latMax &&
+			inLngRange) {
+			return region.name;
+		}
+	}
+	return 'Unknown';
+}
+
+/**
+ * Analyzes geographic diversity of events
+ * Returns regions that need more coverage
+ */
+function analyzeGeographicCoverage(events: GlobeEvent[]): {
+	regionsWithEvents: Set<string>;
+	emptyRegions: string[];
+	regionCounts: Map<string, number>;
+} {
+	const regionCounts = new Map<string, number>();
+
+	// Count events per region
+	for (const event of events) {
+		const region = getEventRegion(event);
+		regionCounts.set(region, (regionCounts.get(region) || 0) + 1);
+	}
+
+	// Find empty or underrepresented regions
+	const regionsWithEvents = new Set(regionCounts.keys());
+	const emptyRegions = GEO_REGIONS
+		.map(r => r.name)
+		.filter(name => !regionsWithEvents.has(name) && name !== 'Arctic' && name !== 'Antarctic');
+
+	return {
+		regionsWithEvents,
+		emptyRegions,
+		regionCounts
+	};
+}
+
+/**
+ * Prioritizes real events and fills gaps with fallback cities for geographic diversity
+ * Ensures the globe has good coverage across all major world regions
+ */
+function blendRealAndFallbackEvents(realEvents: GlobeEvent[], minTotalEvents: number = 30): GlobeEvent[] {
+	// Start with real events
+	const blendedEvents = [...realEvents];
+
+	// Analyze what regions we're missing
+	const coverage = analyzeGeographicCoverage(blendedEvents);
+
+	// If we have enough events and good coverage, we're done
+	if (blendedEvents.length >= minTotalEvents && coverage.emptyRegions.length === 0) {
+		return blendedEvents;
+	}
+
+	// Get fallback cities that fill gaps
+	const fallbackCitiesNeeded: GlobeEvent[] = [];
+
+	// First, add cities from completely empty regions
+	for (const emptyRegion of coverage.emptyRegions) {
+		// Find fallback cities in this region
+		const citiesInRegion = FALLBACK_EVENTS.filter(event => {
+			const region = getEventRegion(event);
+			return region === emptyRegion;
+		});
+
+		// Add 2-3 cities from each empty region for good coverage
+		const citiesToAdd = Math.min(3, citiesInRegion.length);
+		for (let i = 0; i < citiesToAdd; i++) {
+			if (citiesInRegion[i]) {
+				fallbackCitiesNeeded.push(citiesInRegion[i]);
+			}
+		}
+	}
+
+	// Add the region-filling cities
+	blendedEvents.push(...fallbackCitiesNeeded);
+
+	// If we still need more events to reach minimum, add more fallback cities
+	// But prioritize regions that are underrepresented
+	if (blendedEvents.length < minTotalEvents) {
+		const remainingFallbacks = FALLBACK_EVENTS.filter(fb =>
+			!blendedEvents.some(existing =>
+				existing.city_code === fb.city_code &&
+				Math.abs(existing.origin_lat - fb.origin_lat) < 0.1 &&
+				Math.abs(existing.origin_long - fb.origin_long) < 0.1
+			)
+		);
+
+		// Sort by regions with fewer events
+		const sortedFallbacks = remainingFallbacks.sort((a, b) => {
+			const regionA = getEventRegion(a);
+			const regionB = getEventRegion(b);
+			const countA = coverage.regionCounts.get(regionA) || 0;
+			const countB = coverage.regionCounts.get(regionB) || 0;
+			return countA - countB; // Prioritize less-represented regions
+		});
+
+		// Add remaining events needed
+		const eventsNeeded = minTotalEvents - blendedEvents.length;
+		blendedEvents.push(...sortedFallbacks.slice(0, eventsNeeded));
+	}
+
+	return blendedEvents;
+}
+
+/**
+ * Fetches real events from API and blends with fallback cities for geographic diversity
+ * Prioritizes real events while ensuring good global coverage
  */
 export async function loadGlobeEvents(): Promise<void> {
-	// Use random diverse geo locations (future-proofed for real data later)
-	// Pre-filter, shuffle, and randomize event types for better performance
-	const baseEvents = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
-	const randomizedEvents = randomizeEventTypes(baseEvents);
-	// Using diverse random events for globe visualization
-	allEvents.set(randomizedEvents);
+	try {
+		// Attempt to fetch real events from API
+		const response = await fetch('/api/globe-events');
+
+		if (response.ok) {
+			const realEvents = await response.json() as GlobeEvent[];
+
+			if (realEvents && realEvents.length > 0) {
+				console.log(`Loaded ${realEvents.length} real events from database`);
+
+				// Blend real events with fallback cities to ensure geographic diversity
+				const blendedEvents = blendRealAndFallbackEvents(realEvents, 30);
+
+				// Remove duplicates and randomize event types
+				const processedEvents = randomizeEventTypes(
+					shuffleArray(removeDuplicateCoordinates(blendedEvents))
+				);
+
+				console.log(`Final event count: ${processedEvents.length} (${realEvents.length} real + ${processedEvents.length - realEvents.length} fallback for diversity)`);
+
+				allEvents.set(processedEvents);
+				return;
+			}
+		}
+
+		// If API fails or returns no events, use fallback events
+		console.log('No real events available, using fallback cities');
+		const baseEvents = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
+		const randomizedEvents = randomizeEventTypes(baseEvents);
+		allEvents.set(randomizedEvents);
+
+	} catch (error) {
+		console.error('Error loading globe events:', error);
+		// Fall back to random events on error
+		const baseEvents = shuffleArray(removeDuplicateCoordinates([...FALLBACK_EVENTS]));
+		const randomizedEvents = randomizeEventTypes(baseEvents);
+		allEvents.set(randomizedEvents);
+	}
 }
 
 /**
@@ -312,12 +501,10 @@ function canAddEvent(currentEvents: AnimatedEvent[], newEventType: StratusMetric
 		return false;
 	}
 
-	if ((newEventType === 'user_created' || newEventType === 'download_started' || newEventType === 'api_calls') 
-		&& counts.points >= maxPerType * 3) { // Points can be more numerous
-		return false;
-	}
+	return !((newEventType === 'user_created' || newEventType === 'download_started')
+		&& counts.points >= maxPerType * 3);
 
-	return true;
+
 }
 
 /**

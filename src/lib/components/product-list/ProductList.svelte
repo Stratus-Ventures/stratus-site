@@ -69,7 +69,7 @@
 <div
 	class="
     flex h-fit w-full flex-col
-    items-center justify-center gap-12
+    items-center justify-center gap-12 lg:px-14
 "
 >
 	<div
@@ -105,7 +105,7 @@
 	</div>
 
 	<!-- STATE :: EDIT VIEW :: ADD NEW PRODUCT (SHOW AFTER ALL PRODUCTS) -->
-	{#if canEdit && products.length > 0}
+	{#if canEdit && products.length >= 0}
 		<Button onClick={() => handleAddProduct(productState)} label="Add New Product" shimmer={true} />
 	{/if}
 </div>

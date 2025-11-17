@@ -5,7 +5,7 @@ import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, request }) => {
 	try {
-		logger.info('📬 API /request-auth called');
+		logger.info('📬 API /auth called');
 		logger.info('Origin:', url.origin);
 		await requestAuthCode(url.origin);
 		logger.success('✅ Auth code requested via GET');
@@ -18,16 +18,16 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			return new Response(
 				`
                 <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Auth Code Sent</title>
-                </head>
-                <body>
-                    <script>
-                        alert('Auth code sent!');
-                        window.history.back();
-                    </script>
-                </body>
+                <html lang="none">
+									<head>
+											<title>Auth Code Sent</title>
+									</head>
+									<body>
+											<script>
+													alert('Auth code sent!');
+													window.history.back();
+											</script>
+									</body>
                 </html>
             `,
 				{
@@ -50,16 +50,16 @@ export const GET: RequestHandler = async ({ url, request }) => {
 			return new Response(
 				`
                 <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Error</title>
-                </head>
-                <body>
-                    <script>
-                        alert('Failed to send auth code');
-                        window.history.back();
-                    </script>
-                </body>
+                <html lang="none">
+									<head>
+											<title>Error</title>
+									</head>
+									<body>
+											<script>
+													alert('Failed to send auth code');
+													window.history.back();
+											</script>
+									</body>
                 </html>
             `,
 				{
