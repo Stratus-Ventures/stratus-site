@@ -75,17 +75,6 @@
 /*  B A S E   S T Y L E S  ----------------------------------------------------------- */
 
 @layer base {
-	/*  T H E M E   T R A N S I T I O N  */
-	.theme-transition,
-	.theme-transition * {
-		transition:
-			background-color 100ms ease-in-out,
-			border-color 100ms ease-in-out,
-			color 100ms ease-in-out,
-			fill 100ms ease-in-out,
-			opacity 100ms ease-in-out;
-	}
-
 	/*  R E M O V E   S C R O L L B A R S  */
 	* {
 		scrollbar-width: none; /* Firefox */
