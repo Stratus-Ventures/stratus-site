@@ -28,7 +28,7 @@
 {#if canEdit}
 	<div
 		class="
-						transition-opacity duration-300 ease-in-out
+						transition-all duration-300 ease-in-out
             flex h-fit w-full flex-col items-start
             justify-between gap-6 py-6 sm:flex-row
             sm:items-center sm:justify-start
@@ -56,7 +56,7 @@
 		target="_blank"
 		rel="noopener noreferrer nofollow"
 		class="
-						transition-opacity duration-300 ease-in-out
+						transition-all duration-300 ease-in-out
             flex h-fit w-full flex-col items-start
             justify-center gap-2 py-6
             hover:opacity-50 sm:flex-row sm:items-center
