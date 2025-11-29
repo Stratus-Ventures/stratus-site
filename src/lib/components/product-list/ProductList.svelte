@@ -70,6 +70,7 @@
 	class="
     flex h-fit w-full flex-col
     items-center justify-center gap-12 lg:px-14
+    transition-all duration-200 ease-in-out
 "
 >
 	<div

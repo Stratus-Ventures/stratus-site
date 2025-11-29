@@ -25,8 +25,9 @@
 
 	// [ STEP 1.] - Compute button classes based on variant
 	let classes = $derived(`
+				hover:transition-colors hover:duration-300 hover:ease-in-out
         flex w-full lg:w-fit h-fit items-center justify-center relative
-        rounded-lg button-label px-6 py-3 select-none cursor-pointer theme-transition
+        rounded-lg button-label px-6 py-3 select-none cursor-pointer
         ${
 			variant === 'outlined'
 				? 'bg-transparent border-1 hover:bg-secondary-bg border-border text-primary-fg'
@@ -81,6 +82,7 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		text-rendering: optimizeLegibility;
+		transition: color 0.3s ease-in-out;
 	}
 
 	.shimmer-text::before {
