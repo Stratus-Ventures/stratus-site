@@ -82,7 +82,7 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		text-rendering: optimizeLegibility;
-		transition: color 0.3s ease-in-out;
+		transition: color 0s;
 	}
 
 	.shimmer-text::before {
@@ -113,6 +113,7 @@
 	a:hover .shimmer-text,
 	button:hover .shimmer-text {
 		color: var(--color-button-fg-50);
+		transition: color 0.3s ease-in-out;
 	}
 
 	a:hover .shimmer-text::before,

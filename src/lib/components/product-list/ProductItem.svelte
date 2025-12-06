@@ -68,3 +68,12 @@
 		<p class="paragraph w-full text-start text-secondary-fg">{product.tagline}</p>
 	</a>
 {/if}
+
+<style>
+	/* Safari-specific fix for hover opacity */
+	a[href] {
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+		will-change: opacity;
+	}
+</style>

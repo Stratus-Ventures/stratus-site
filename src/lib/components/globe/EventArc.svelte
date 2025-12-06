@@ -40,9 +40,17 @@
 	const HOLD_DURATION = 3500; // 3.5 seconds hold at Phoenix
 	const FALL_DURATION = 1500; // 1.5 seconds animate back from Phoenix to origin
 
+	// Frame throttling for performance
+	let lastUpdateTime = 0;
+	const UPDATE_INTERVAL = 16.67; // ~60fps
+
 	// Animate the arc from origin to Phoenix, hold, then back to origin
 	useTask(() => {
-		const elapsed = Date.now() - animationStart;
+		const now = Date.now();
+		if (now - lastUpdateTime < UPDATE_INTERVAL) return;
+		lastUpdateTime = now;
+
+		const elapsed = now - animationStart;
 		const totalPoints = arcPoints.length;
 
 		if (elapsed < RISE_DURATION) {

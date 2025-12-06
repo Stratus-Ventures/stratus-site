@@ -17,6 +17,9 @@
 	// Base position on globe surface
 	const basePosition = latLngToSphere(event.origin_lat, event.origin_long, radius);
 
+	// Pre-calculate normal vector for performance (calculate once, not per frame)
+	const normal = basePosition.clone().normalize();
+
 	// Random height variation (up to 0.25x radius) - pre-calculated for performance
 	const maxHeight = radius * (0.15 + Math.random() * 0.1);
 
@@ -27,9 +30,17 @@
 	const HOLD_DURATION = 2000; // 2 seconds hold
 	const FALL_DURATION = 1500; // 1.5 seconds fall
 
+	// Frame throttling for performance
+	let lastUpdateTime = 0;
+	const UPDATE_INTERVAL = 16.67; // ~60fps
+
 	// Animate the ping-pong motion - optimized with early exit
 	useTask(() => {
-		const elapsed = Date.now() - animationStart;
+		const now = Date.now();
+		if (now - lastUpdateTime < UPDATE_INTERVAL) return;
+		lastUpdateTime = now;
+
+		const elapsed = now - animationStart;
 
 		if (elapsed < RISE_DURATION) {
 			// Phase 1: Rise (0 to maxHeight) with improved easing
@@ -60,9 +71,8 @@
 
 	// Calculate current position (base + height along normal)
 	const currentPosition = $derived.by(() => {
-		// Normal vector points outward from center
-		const normal = basePosition.clone().normalize();
-		const offset = normal.multiplyScalar(currentHeight);
+		// Reuse pre-calculated normal instead of cloning and normalizing
+		const offset = normal.clone().multiplyScalar(currentHeight);
 		const pos = basePosition.clone().add(offset);
 		return [pos.x, pos.y, pos.z] as [number, number, number];
 	});
