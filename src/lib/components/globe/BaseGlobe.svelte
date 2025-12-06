@@ -26,6 +26,7 @@
 	let coastGroup: Group | null = null;
 	let coastMaterials: LineMaterial[] = [];
 	let isInitialized = $state(false);
+	let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	// Optimized coastline generation with performance improvements
 	async function generateCoastlines(r: number, color: Color) {
@@ -128,17 +129,22 @@
 		}
 	});
 
-	// Handle screen resolution updates
+	// Handle screen resolution updates with debouncing
 	$effect(() => {
 		if (!coastMaterials.length || !size) return;
 
-		for (const m of coastMaterials) {
-			m.resolution.set(size.width, size.height);
-		}
+		// Debounce resolution updates to avoid thrashing
+		if (resizeTimeout) clearTimeout(resizeTimeout);
+
+		resizeTimeout = setTimeout(() => {
+			for (const m of coastMaterials) {
+				m.resolution.set(size.width, size.height);
+			}
+		}, 100); // Wait 100ms after last resize
 	});
 </script>
 
 <T.Mesh bind:ref={meshRef}>
-	<T.SphereGeometry args={[radius, 64, 32]} />
+	<T.SphereGeometry args={[radius, 48, 24]} />
 	<T.MeshBasicMaterial color={globeColor} toneMapped={false} />
 </T.Mesh>
